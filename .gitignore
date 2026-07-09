@@ -1,0 +1,11 @@
+# Node & tooling dependencies
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Canva extraction temporary/scrap files
+canva.html
+extracted_data.json
+extract_canva.py
+analyze_pages.py
+*.log
