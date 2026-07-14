@@ -243,22 +243,31 @@ const phoneViews = document.getElementById('phoneViews');
 const phoneMuteIndicator = document.getElementById('phoneMuteIndicator');
 const audioDisc = document.querySelector('.phone-audio-disc');
 const videoCards = document.querySelectorAll('.work-card.video-card');
-const phoneScreen = document.querySelector('.phone-screen');
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const playIcon = playPauseBtn ? playPauseBtn.querySelector('.play-icon') : null;
+const pauseIcon = playPauseBtn ? playPauseBtn.querySelector('.pause-icon') : null;
 
 if (phoneVideo && videoCards.length > 0) {
   // Initialize video as muted so autoplay is allowed by the browser
   phoneVideo.muted = true;
 
-  // Sync rotating audio disc animation with video play state
+  // Sync rotating audio disc animation & play/pause buttons with video play state
   phoneVideo.addEventListener('play', () => {
     if (audioDisc) audioDisc.classList.add('playing');
+    if (playIcon) playIcon.style.display = 'none';
+    if (pauseIcon) pauseIcon.style.display = 'block';
   });
   
   phoneVideo.addEventListener('pause', () => {
     if (audioDisc) audioDisc.classList.remove('playing');
+    if (playIcon) playIcon.style.display = 'block';
+    if (pauseIcon) pauseIcon.style.display = 'none';
   });
 
-  // Helper to flash play, pause, or volume indicators on the screen
+  // Helper to flash play or pause indicators on the screen
   const flashIndicator = (icon) => {
     if (phoneMuteIndicator) {
       phoneMuteIndicator.textContent = icon;
@@ -273,14 +282,76 @@ if (phoneVideo && videoCards.length > 0) {
     }
   };
 
-  // Click on the phone screen to toggle Play/Pause
-  if (phoneScreen) {
-    phoneScreen.addEventListener('click', (e) => {
-      // Ignore clicks on buttons/interactive elements on the right or bottom
-      if (e.target.closest('.phone-reels-right') || e.target.closest('.phone-follow-btn')) {
-        return;
+  // Helper to get active card index
+  const getActiveCardIndex = () => {
+    let activeIndex = 0;
+    videoCards.forEach((card, idx) => {
+      if (card.classList.contains('active')) {
+        activeIndex = idx;
       }
+    });
+    return activeIndex;
+  };
 
+  // Helper to load video card by index
+  const loadVideoCard = (index) => {
+    if (index < 0 || index >= videoCards.length) return;
+    const card = videoCards[index];
+    
+    // Remove active class from all cards
+    videoCards.forEach(c => c.classList.remove('active'));
+    // Add active class to selected card
+    card.classList.add('active');
+
+    const videoSrc = card.getAttribute('data-video');
+    const likes = card.getAttribute('data-likes');
+    const views = card.getAttribute('data-views');
+    const desc = card.getAttribute('data-desc');
+
+    if (videoSrc) {
+      phoneVideo.src = videoSrc;
+      phoneVideo.muted = false;
+      phoneVideo.load();
+      
+      phoneVideo.play().then(() => {
+        flashIndicator('▶');
+      }).catch(() => {
+        // Fallback to muted autoplay if browser blocks
+        phoneVideo.muted = true;
+        phoneVideo.play().catch(() => {});
+      });
+
+      if (phoneLikes) phoneLikes.textContent = likes || '0';
+      if (phoneViews) phoneViews.textContent = views || '0';
+      if (phoneVideoDesc) phoneVideoDesc.textContent = desc || '';
+    }
+  };
+
+  // Button Event Listeners
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      let currentIndex = getActiveCardIndex();
+      let prevIndex = currentIndex - 1;
+      if (prevIndex < 0) {
+        prevIndex = videoCards.length - 1;
+      }
+      loadVideoCard(prevIndex);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      let currentIndex = getActiveCardIndex();
+      let nextIndex = currentIndex + 1;
+      if (nextIndex >= videoCards.length) {
+        nextIndex = 0;
+      }
+      loadVideoCard(nextIndex);
+    });
+  }
+
+  if (playPauseBtn) {
+    playPauseBtn.addEventListener('click', () => {
       if (phoneVideo.paused) {
         phoneVideo.muted = false;
         phoneVideo.play().then(() => {
@@ -293,6 +364,7 @@ if (phoneVideo && videoCards.length > 0) {
     });
   }
 
+  // Hover animations & click events on standard cards
   videoCards.forEach(card => {
     const previewVideo = card.querySelector('video');
 
@@ -312,36 +384,8 @@ if (phoneVideo && videoCards.length > 0) {
 
     // 2. Click to load inside phone mockup
     card.addEventListener('click', () => {
-      // Remove active class from all cards
-      videoCards.forEach(c => c.classList.remove('active'));
-      // Add active class to clicked card
-      card.classList.add('active');
-
-      const videoSrc = card.getAttribute('data-video');
-      const likes = card.getAttribute('data-likes');
-      const views = card.getAttribute('data-views');
-      const desc = card.getAttribute('data-desc');
-
-      if (videoSrc) {
-        // Change phone video source and unmute it since the user interacted by clicking
-        phoneVideo.src = videoSrc;
-        phoneVideo.muted = false;
-        phoneVideo.load();
-        
-        // Play the video with sound!
-        phoneVideo.play().then(() => {
-          flashIndicator('🔊');
-        }).catch(() => {
-          // If browser still blocks, fallback to muted autoplay
-          phoneVideo.muted = true;
-          phoneVideo.play().catch(() => {});
-        });
-
-        // Update stats and description
-        if (phoneLikes) phoneLikes.textContent = likes || '0';
-        if (phoneViews) phoneViews.textContent = views || '0';
-        if (phoneVideoDesc) phoneVideoDesc.textContent = desc || '';
-      }
+      const idx = Array.from(videoCards).indexOf(card);
+      loadVideoCard(idx);
     });
   });
 }

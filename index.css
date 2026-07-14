@@ -1051,6 +1051,47 @@ a { text-decoration: none; color: inherit; }
   line-height: 1.4;
 }
 
+/* Phone Navigation Controls */
+.phone-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 15px 0 10px 0;
+}
+
+.phone-control-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.phone-control-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #111;
+  transform: translateY(-2px);
+}
+
+.phone-control-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.phone-control-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* Video Card Thumbnail Preview Hover */
 .video-card .work-card-img video {
   width: 100%;

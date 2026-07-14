@@ -189,8 +189,21 @@
           </div>
         </div>
       </div>
-      <span class="phone-instruction">✦ Click any video card on the right to preview inside the phone</span>
-      <span class="phone-instruction phone-instruction-sub" style="font-size:0.55rem; margin-top:-8px; opacity:0.6; color: var(--gold);">✦ Tap the screen to play / pause video</span>
+      <!-- Phone Navigation and Play/Pause Controls -->
+      <div class="phone-controls">
+        <button id="prevBtn" class="phone-control-btn" aria-label="Previous Video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button id="playPauseBtn" class="phone-control-btn" aria-label="Play/Pause">
+          <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button id="nextBtn" class="phone-control-btn" aria-label="Next Video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+
+      <span class="phone-instruction">✦ Click a card on the right or use the controls above to preview</span>
     </div>
 
     <!-- Right Column: Gallery Cards Grid -->
