@@ -152,72 +152,249 @@ if (contactForm) {
   });
 }
 
-/* ─────────── Instagram Lightbox Modal with Slider ─────────── */
-const lightbox = document.getElementById('lightbox');
-const lightboxImg = document.getElementById('lightbox-img');
-const lightboxCaption = document.getElementById('lightbox-caption');
-const lightboxClose = lightbox && lightbox.querySelector('.lightbox-close');
-const lightboxPrev = lightbox && lightbox.querySelector('.lightbox-prev');
-const lightboxNext = lightbox && lightbox.querySelector('.lightbox-next');
-const igPosts = Array.from(document.querySelectorAll('.ig-post'));
+/* ─────────── Universal Media Lightbox ─────────── */
 
-let currentPostIndex = 0;
+const lightbox = document.getElementById("lightbox");
 
-if (lightbox && igPosts.length > 0) {
-  // Helper to open lightbox and show specific post
-  const showPost = (index) => {
-    currentPostIndex = (index + igPosts.length) % igPosts.length;
-    const postEl = igPosts[currentPostIndex];
-    const imgEl = postEl.querySelector('img');
-    
-    if (imgEl) {
-      lightboxImg.src = imgEl.src;
-      lightboxImg.alt = imgEl.alt;
-      lightboxCaption.textContent = imgEl.alt || `Post ${currentPostIndex + 1}`;
-      
-      // Update accessibility attributes
-      lightbox.setAttribute('aria-hidden', 'false');
-      lightboxClose.focus();
+const lightboxImg = document.getElementById("lightbox-img");
+
+const lightboxVideo = document.getElementById("lightbox-video");
+
+const lightboxCaption = document.getElementById("lightbox-caption");
+
+const lightboxClose = document.querySelector(".lightbox-close");
+
+const lightboxPrev = document.querySelector(".lightbox-prev");
+
+const lightboxNext = document.querySelector(".lightbox-next");
+
+let lightboxGroup = [];
+let currentLightboxIndex = 0;
+
+function showLightboxItem(index){
+
+    if(!lightboxGroup.length) return;
+
+    currentLightboxIndex =
+        (index + lightboxGroup.length) %
+        lightboxGroup.length;
+
+    const item = lightboxGroup[currentLightboxIndex];
+
+    lightboxCaption.textContent = item.alt || "";
+
+    if(item.type === "video"){
+
+        lightboxImg.style.display="none";
+
+        lightboxVideo.style.display="block";
+
+        lightboxVideo.pause();
+
+        lightboxVideo.src=item.src;
+
+        lightboxVideo.load();
+
+        lightboxVideo.play().catch(()=>{});
+
+    }else{
+
+        lightboxVideo.pause();
+
+        lightboxVideo.removeAttribute("src");
+
+        lightboxVideo.load();
+
+        lightboxVideo.style.display="none";
+
+        lightboxImg.style.display="block";
+
+        lightboxImg.src=item.src;
+
+        lightboxImg.alt=item.alt;
+
     }
-  };
 
-  // Close lightbox
-  const closeLightbox = () => {
-    lightbox.setAttribute('aria-hidden', 'true');
-  };
+    lightboxPrev.style.display =
+        lightboxGroup.length>1 ? "flex":"none";
 
-  // Attach click listener to each post
-  igPosts.forEach((post, index) => {
-    post.addEventListener('click', () => {
-      showPost(index);
-    });
-  });
+    lightboxNext.style.display =
+        lightboxGroup.length>1 ? "flex":"none";
 
-  // Event handlers
-  lightboxClose.addEventListener('click', closeLightbox);
-  lightboxPrev.addEventListener('click', () => showPost(currentPostIndex - 1));
-  lightboxNext.addEventListener('click', () => showPost(currentPostIndex + 1));
+    lightbox.setAttribute("aria-hidden","false");
 
-  // Close on clicking overlay background
-  lightbox.addEventListener('click', (e) => {
-    if (e.target === lightbox) {
-      closeLightbox();
-    }
-  });
-
-  // Keyboard navigation (Esc to close, Left/Right arrows to change side)
-  document.addEventListener('keydown', (e) => {
-    if (lightbox.getAttribute('aria-hidden') === 'false') {
-      if (e.key === 'Escape') {
-        closeLightbox();
-      } else if (e.key === 'ArrowLeft') {
-        showPost(currentPostIndex - 1);
-      } else if (e.key === 'ArrowRight') {
-        showPost(currentPostIndex + 1);
-      }
-    }
-  });
 }
+
+function openGallery(group,startIndex){
+
+    lightboxGroup=group;
+
+    showLightboxItem(startIndex);
+
+}
+
+function closeLightbox(){
+
+    lightbox.setAttribute("aria-hidden","true");
+
+    lightboxVideo.pause();
+
+    lightboxVideo.removeAttribute("src");
+
+    lightboxVideo.load();
+
+}
+
+lightboxClose.addEventListener("click",closeLightbox);
+
+lightboxPrev.addEventListener("click",()=>{
+
+    showLightboxItem(currentLightboxIndex-1);
+
+});
+
+lightboxNext.addEventListener("click",()=>{
+
+    showLightboxItem(currentLightboxIndex+1);
+
+});
+
+lightbox.addEventListener("click",(e)=>{
+
+    if(e.target===lightbox){
+
+        closeLightbox();
+
+    }
+
+});
+
+document.addEventListener("keydown",(e)=>{
+
+    if(lightbox.getAttribute("aria-hidden")==="true") return;
+
+    if(e.key==="Escape"){
+
+        closeLightbox();
+
+    }
+
+    if(e.key==="ArrowLeft"){
+
+        showLightboxItem(currentLightboxIndex-1);
+
+    }
+
+    if(e.key==="ArrowRight"){
+
+        showLightboxItem(currentLightboxIndex+1);
+
+    }
+
+});
+
+
+/* ---------- Instagram ---------- */
+
+const igPosts=[
+
+...document.querySelectorAll(".ig-post")
+
+];
+
+const instagramGallery=igPosts.map(post=>{
+
+    const img=post.querySelector("img");
+
+    return{
+
+        type:"image",
+
+        src:img.src,
+
+        alt:img.alt
+
+    };
+
+});
+
+igPosts.forEach((post,index)=>{
+
+    post.addEventListener("click",()=>{
+
+        openGallery(instagramGallery,index);
+
+    });
+
+});
+
+
+/* ---------- BTS ---------- */
+
+const btsTiles=[
+
+...document.querySelectorAll(".skill-media-video")
+
+];
+
+const btsGallery=[
+
+{
+type:"video",
+src:"images/BTS 1.mp4",
+alt:"Behind the scenes 1"
+},
+{
+type:"video",
+src:"images/BTS 2.mp4",
+alt:"Behind the scenes 2"
+},
+{
+type:"video",
+src:"images/BTS 3.mp4",
+alt:"Behind the scenes 3"
+}
+
+];
+
+btsTiles.forEach((tile,index)=>{
+
+    tile.addEventListener("click",()=>{
+
+        openGallery(btsGallery,index);
+
+    });
+
+});
+
+
+/* ---------- SMM ---------- */
+
+const smmImages=[
+
+...document.querySelectorAll(".skill-media-post img")
+
+];
+
+const smmGallery=smmImages.map(img=>({
+
+type:"image",
+
+src:img.src,
+
+alt:img.alt
+
+}));
+
+smmImages.forEach((img,index)=>{
+
+    img.addEventListener("click",()=>{
+
+        openGallery(smmGallery,index);
+
+    });
+
+});
 
 /* ─────────── Interactive Phone Mockup Video Player ─────────── */
 const phoneVideo = document.getElementById('phoneVideo');
@@ -264,8 +441,9 @@ const generateThumbnail = (videoSrc, imgEl) => {
   }, { once: true });
 };
 
-document.querySelectorAll('.work-card-thumb[data-thumb-src]').forEach((imgEl) => {
-  const thumbSrc = imgEl.getAttribute('data-thumb-src');
+document.querySelectorAll('[data-thumb-src]').forEach((imgEl) => {
+  const thumbSrc = imgEl.dataset.thumbSrc;
+
   if (thumbSrc) {
     generateThumbnail(thumbSrc, imgEl);
   }

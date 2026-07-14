@@ -1787,7 +1787,8 @@ grid-template-columns:repeat(2,1fr);
   to   { transform: scale(1); opacity: 1; }
 }
 
-.lightbox-content img {
+.lightbox-content img,
+.lightbox-content video {
   max-width: 85vw;
   max-height: 72vh;
   object-fit: contain;
@@ -1795,6 +1796,7 @@ grid-template-columns:repeat(2,1fr);
   border-radius: var(--radius-sm);
   box-shadow: 0 25px 60px rgba(0,0,0,0.5);
   background: #000;
+  display: block;
 }
 
 .lightbox-caption {
