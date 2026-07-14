@@ -255,7 +255,17 @@ if (lightbox && igPosts.length > 0) {
   /* -- Unmute on first user interaction anywhere -- */
   function unlockSound() {
     vid.muted = false;
+    vid.volume = 1;
     if (hint) { hint.classList.add('hidden'); }
+    
+    // Explicitly call play to ensure audio tracks register user gesture
+    var playPromise = vid.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(function(err) {
+        console.warn("Play failed during unlockSound:", err);
+      });
+    }
+
     document.removeEventListener('click',      unlockSound);
     document.removeEventListener('touchstart', unlockSound);
     document.removeEventListener('keydown',    unlockSound);
@@ -267,6 +277,20 @@ if (lightbox && igPosts.length > 0) {
   /* -- Keep disc spinning while playing ----------- */
   vid.addEventListener('play',  function(){ if (disc) disc.classList.add('playing'); });
   vid.addEventListener('pause', function(){ if (disc) disc.classList.remove('playing'); });
+
+  /* -- Tap screen to play / pause -- */
+  vid.addEventListener('click', function(e) {
+    // Unmute immediately on user click
+    vid.muted = false;
+    vid.volume = 1;
+    if (hint) { hint.classList.add('hidden'); }
+
+    if (vid.paused) {
+      vid.play().catch(function(err){ console.warn(err); });
+    } else {
+      vid.pause();
+    }
+  });
 
   /* -- Card hover: silent preview in the card ----- */
   cards.forEach(function(card, idx) {
@@ -282,10 +306,25 @@ if (lightbox && igPosts.length > 0) {
       if (descEl)  descEl.textContent  = card.getAttribute('data-desc')  || '';
       if (likesEl) likesEl.textContent = card.getAttribute('data-likes') || '';
       if (viewsEl) viewsEl.textContent = card.getAttribute('data-views') || '';
-      if (src && vid.getAttribute('src') !== src) {
-        vid.src = src;
-        vid.load();
-        vid.play().catch(function(){});
+      
+      // Unmute because user clicked a card
+      vid.muted = false;
+      vid.volume = 1;
+      if (hint) { hint.classList.add('hidden'); }
+
+      if (src) {
+        // Check if we need to load a new source or just play the current one
+        var currentSrc = vid.src || '';
+        var isSameSrc = decodeURIComponent(currentSrc).endsWith(src);
+        
+        if (!isSameSrc) {
+          vid.src = src;
+          vid.load();
+        } else {
+          vid.currentTime = 0;
+        }
+        
+        vid.play().catch(function(err){ console.warn(err); });
       }
     });
   });
