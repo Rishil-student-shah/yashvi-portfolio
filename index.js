@@ -225,10 +225,6 @@ const phoneVideoDesc = document.getElementById('phoneVideoDesc');
 const phoneLikes = document.getElementById('phoneLikes');
 const phoneViews = document.getElementById('phoneViews');
 const phoneMuteIndicator = document.getElementById('phoneMuteIndicator');
-const phonePlayPauseBtn = document.getElementById('phonePlayPauseBtn');
-const phoneNextBtn = document.getElementById('phoneNextBtn');
-const phoneMuteBtn = document.getElementById('phoneMuteBtn');
-const phonePlaybackState = document.getElementById('phonePlaybackState');
 const audioDisc = document.querySelector('.phone-audio-disc');
 const videoCards = document.querySelectorAll('.work-card.video-card');
 const phoneScreen = document.querySelector('.phone-screen');
@@ -249,47 +245,18 @@ if (phoneVideo && videoCards.length > 0) {
     }, 700);
   };
 
-  const syncControls = () => {
-    const isPlaying = !phoneVideo.paused;
-    const isMuted = phoneVideo.muted;
-
-    if (phonePlayPauseBtn) {
-      phonePlayPauseBtn.textContent = isPlaying ? 'Pause' : 'Play';
-      phonePlayPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause reel' : 'Play reel');
-      phonePlayPauseBtn.classList.toggle('is-active', isPlaying);
-    }
-
-    if (phoneNextBtn) {
-      phoneNextBtn.classList.toggle('is-active', false);
-    }
-
-    if (phoneMuteBtn) {
-      phoneMuteBtn.textContent = isMuted ? 'Sound Off' : 'Sound On';
-      phoneMuteBtn.setAttribute('aria-label', isMuted ? 'Unmute reel audio' : 'Mute reel audio');
-      phoneMuteBtn.classList.toggle('is-active', !isMuted);
-    }
-
-    if (phonePlaybackState) {
-      phonePlaybackState.textContent = isPlaying ? (isMuted ? 'Playing muted' : 'Playing with sound') : 'Paused';
-    }
-  };
-
   const playReel = async () => {
-
     try {
       await phoneVideo.play();
-      syncControls();
-      setIndicator(phoneVideo.muted ? '🔇' : '🔊');
+      setIndicator('▶');
       return true;
     } catch (_error) {
-      syncControls();
       return false;
     }
   };
 
   const pauseReel = () => {
     phoneVideo.pause();
-    syncControls();
     setIndicator('⏸');
   };
 
@@ -312,7 +279,6 @@ if (phoneVideo && videoCards.length > 0) {
       phoneVideo.addEventListener('loadedmetadata', () => {
         phoneVideo.currentTime = 0;
         phoneVideo.pause();
-        syncControls();
       }, { once: true });
 
       if (phoneLikes) phoneLikes.textContent = likes || '0';
@@ -321,68 +287,22 @@ if (phoneVideo && videoCards.length > 0) {
     }
   };
 
-  const getNextCard = () => {
-    if (!currentVideoCard) return videoCards[0] || null;
-    const currentIndex = Array.from(videoCards).indexOf(currentVideoCard);
-    if (currentIndex < 0) return videoCards[0] || null;
-    return videoCards[(currentIndex + 1) % videoCards.length] || null;
-  };
-
   // Start in paused mode so the first reel shows a paused frame.
   phoneVideo.muted = false;
 
-  phoneVideo.addEventListener('loadeddata', syncControls);
+  phoneVideo.addEventListener('loadeddata', () => {
+    phoneVideo.pause();
+  });
 
   // Sync rotating audio disc animation with video play state
   phoneVideo.addEventListener('play', () => {
     if (audioDisc) audioDisc.classList.add('playing');
-    syncControls();
   });
   
   phoneVideo.addEventListener('pause', () => {
     if (audioDisc) audioDisc.classList.remove('playing');
-    syncControls();
   });
-
-  phoneVideo.addEventListener('volumechange', syncControls);
-
-  syncControls();
   phoneVideo.pause();
-
-  if (phonePlayPauseBtn) {
-    phonePlayPauseBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-
-      if (phoneVideo.paused) {
-        playReel();
-      } else {
-        pauseReel();
-      }
-    });
-  }
-
-  if (phoneNextBtn) {
-    phoneNextBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const nextCard = getNextCard();
-      if (nextCard) {
-        loadReelFromCard(nextCard);
-      }
-    });
-  }
-
-  if (phoneMuteBtn) {
-    phoneMuteBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      phoneVideo.muted = !phoneVideo.muted;
-      syncControls();
-      setIndicator(phoneVideo.muted ? '🔇' : '🔊');
-
-      if (!phoneVideo.paused && !phoneVideo.muted) {
-        phoneVideo.play().catch(() => {});
-      }
-    });
-  }
 
   // Click on the phone screen toggles play/pause only. Audio is controlled separately.
   if (phoneScreen) {
