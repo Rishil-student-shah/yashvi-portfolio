@@ -821,6 +821,30 @@ a { text-decoration: none; color: inherit; }
   object-fit: cover;
 }
 
+/* Unmute hint badge */
+.unmute-hint {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 5px 10px;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  z-index: 20;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.unmute-hint.hidden { opacity: 0; }
+
 /* Placeholder shown before any card is clicked */
 .phone-placeholder {
   position: absolute;

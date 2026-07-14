@@ -236,81 +236,58 @@ if (lightbox && igPosts.length > 0) {
 }
 
 
-/* -- Phone Mockup: click card to play, tap screen to pause/resume -- */
+/* -- Phone Mockup Video Player -- */
 (function () {
-  var vid         = document.getElementById('phoneVideo');
-  var placeholder = document.getElementById('phonePlaceholder');
-  var screen      = document.querySelector('.phone-screen');
-  var cards       = Array.from(document.querySelectorAll('.work-card.video-card'));
-  var descEl      = document.getElementById('phoneVideoDesc');
-  var likesEl     = document.getElementById('phoneLikes');
-  var viewsEl     = document.getElementById('phoneViews');
-  var disc        = document.querySelector('.phone-audio-disc');
+  var vid   = document.getElementById('phoneVideo');
+  var hint  = document.getElementById('unmuteHint');
+  var disc  = document.querySelector('.phone-audio-disc');
+  var cards = Array.from(document.querySelectorAll('.work-card.video-card'));
+  var descEl  = document.getElementById('phoneVideoDesc');
+  var likesEl = document.getElementById('phoneLikes');
+  var viewsEl = document.getElementById('phoneViews');
 
-  if (!vid || !cards.length) return;
+  if (!vid) return;
 
-  var loadedSrc = '';
+  /* -- Autoplay muted (browser allows this) -------- */
+  vid.muted  = true;
+  vid.volume = 1;
 
-  function updateCard(idx) {
-    cards.forEach(function(c){ c.classList.remove('active'); });
-    cards[idx].classList.add('active');
-    if (descEl)  descEl.textContent  = cards[idx].getAttribute('data-desc')  || '';
-    if (likesEl) likesEl.textContent = cards[idx].getAttribute('data-likes') || '';
-    if (viewsEl) viewsEl.textContent = cards[idx].getAttribute('data-views') || '';
-    return cards[idx].getAttribute('data-video') || '';
+  /* -- Unmute on first user interaction anywhere -- */
+  function unlockSound() {
+    vid.muted = false;
+    if (hint) { hint.classList.add('hidden'); }
+    document.removeEventListener('click',      unlockSound);
+    document.removeEventListener('touchstart', unlockSound);
+    document.removeEventListener('keydown',    unlockSound);
   }
+  document.addEventListener('click',      unlockSound, { once: true });
+  document.addEventListener('touchstart', unlockSound, { once: true });
+  document.addEventListener('keydown',    unlockSound, { once: true });
 
-  function playWithSound(src) {
-    /* Show video, hide placeholder */
-    if (placeholder) placeholder.style.display = 'none';
-    vid.style.display = 'block';
-    vid.muted  = false;
-    vid.volume = 1;
+  /* -- Keep disc spinning while playing ----------- */
+  vid.addEventListener('play',  function(){ if (disc) disc.classList.add('playing'); });
+  vid.addEventListener('pause', function(){ if (disc) disc.classList.remove('playing'); });
 
-    if (src === loadedSrc) {
-      /* Already loaded — just rewind and play */
-      vid.currentTime = 0;
-      vid.play().catch(function(e){ console.warn(e); });
-    } else {
-      /* New source — set it, wait for enough data, then play */
-      loadedSrc = src;
-      vid.src   = src;
-      vid.load();
-      vid.addEventListener('canplay', function once() {
-        vid.removeEventListener('canplay', once);
-        vid.muted  = false;
-        vid.volume = 1;
-        vid.play().catch(function(e){ console.warn(e); });
-      });
-    }
-  }
-
-  /* Card clicks — this IS the user gesture that unlocks sound */
+  /* -- Card hover: silent preview in the card ----- */
   cards.forEach(function(card, idx) {
     var thumb = card.querySelector('video');
     card.addEventListener('mouseenter', function(){ if (thumb) thumb.play().catch(function(){}); });
     card.addEventListener('mouseleave', function(){ if (thumb){ thumb.pause(); thumb.currentTime = 0; } });
-    card.addEventListener('click', function(){ playWithSound(updateCard(idx)); });
-  });
 
-  /* Tap the phone screen to pause / resume */
-  if (screen) {
-    screen.addEventListener('click', function(e) {
-      /* ignore clicks that originated from action buttons */
-      if (e.target.closest('.phone-action-btn')) return;
-      if (!loadedSrc) return;          /* nothing loaded yet */
-      if (vid.paused) {
-        vid.muted  = false;
-        vid.volume = 1;
-        vid.play().catch(function(e){ console.warn(e); });
-      } else {
-        vid.pause();
+    /* Card click: swap main video to this card's source */
+    card.addEventListener('click', function() {
+      var src = card.getAttribute('data-video');
+      cards.forEach(function(c){ c.classList.remove('active'); });
+      card.classList.add('active');
+      if (descEl)  descEl.textContent  = card.getAttribute('data-desc')  || '';
+      if (likesEl) likesEl.textContent = card.getAttribute('data-likes') || '';
+      if (viewsEl) viewsEl.textContent = card.getAttribute('data-views') || '';
+      if (src && vid.getAttribute('src') !== src) {
+        vid.src = src;
+        vid.load();
+        vid.play().catch(function(){});
       }
     });
-  }
-
-  /* Keep disc animation in sync */
-  vid.addEventListener('play',  function(){ if (disc) disc.classList.add('playing'); });
-  vid.addEventListener('pause', function(){ if (disc) disc.classList.remove('playing'); });
+  });
 
 }());
