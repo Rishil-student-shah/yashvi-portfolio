@@ -235,98 +235,109 @@ if (lightbox && igPosts.length > 0) {
   });
 }
 
+/* ─────────── Interactive Phone Mockup Video Player ─────────── */
+const phoneVideo = document.getElementById('phoneVideo');
+const phoneVideoDesc = document.getElementById('phoneVideoDesc');
+const phoneLikes = document.getElementById('phoneLikes');
+const phoneViews = document.getElementById('phoneViews');
+const phoneMuteIndicator = document.getElementById('phoneMuteIndicator');
+const audioDisc = document.querySelector('.phone-audio-disc');
+const videoCards = document.querySelectorAll('.work-card.video-card');
+const phoneScreen = document.querySelector('.phone-screen');
 
-/* -- Phone Mockup Video Player -- */
-(function () {
-  var vid   = document.getElementById('phoneVideo');
-  var hint  = document.getElementById('unmuteHint');
-  var disc  = document.querySelector('.phone-audio-disc');
-  var cards = Array.from(document.querySelectorAll('.work-card.video-card'));
-  var descEl  = document.getElementById('phoneVideoDesc');
-  var likesEl = document.getElementById('phoneLikes');
-  var viewsEl = document.getElementById('phoneViews');
+if (phoneVideo && videoCards.length > 0) {
+  // Initialize video as muted so autoplay is allowed by the browser
+  phoneVideo.muted = true;
 
-  if (!vid) return;
-
-  /* -- Autoplay muted (browser allows this) -------- */
-  vid.muted  = true;
-  vid.volume = 1;
-
-  /* -- Unmute on first user interaction anywhere -- */
-  function unlockSound() {
-    vid.muted = false;
-    vid.volume = 1;
-    if (hint) { hint.classList.add('hidden'); }
-    
-    // Explicitly call play to ensure audio tracks register user gesture
-    var playPromise = vid.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(function(err) {
-        console.warn("Play failed during unlockSound:", err);
-      });
-    }
-
-    document.removeEventListener('click',      unlockSound);
-    document.removeEventListener('touchstart', unlockSound);
-    document.removeEventListener('keydown',    unlockSound);
-  }
-  document.addEventListener('click',      unlockSound, { once: true });
-  document.addEventListener('touchstart', unlockSound, { once: true });
-  document.addEventListener('keydown',    unlockSound, { once: true });
-
-  /* -- Keep disc spinning while playing ----------- */
-  vid.addEventListener('play',  function(){ if (disc) disc.classList.add('playing'); });
-  vid.addEventListener('pause', function(){ if (disc) disc.classList.remove('playing'); });
-
-  /* -- Tap screen to play / pause -- */
-  vid.addEventListener('click', function(e) {
-    // Unmute immediately on user click
-    vid.muted = false;
-    vid.volume = 1;
-    if (hint) { hint.classList.add('hidden'); }
-
-    if (vid.paused) {
-      vid.play().catch(function(err){ console.warn(err); });
-    } else {
-      vid.pause();
-    }
+  // Sync rotating audio disc animation with video play state
+  phoneVideo.addEventListener('play', () => {
+    if (audioDisc) audioDisc.classList.add('playing');
+  });
+  
+  phoneVideo.addEventListener('pause', () => {
+    if (audioDisc) audioDisc.classList.remove('playing');
   });
 
-  /* -- Card hover: silent preview in the card ----- */
-  cards.forEach(function(card, idx) {
-    var thumb = card.querySelector('video');
-    card.addEventListener('mouseenter', function(){ if (thumb) thumb.play().catch(function(){}); });
-    card.addEventListener('mouseleave', function(){ if (thumb){ thumb.pause(); thumb.currentTime = 0; } });
-
-    /* Card click: swap main video to this card's source */
-    card.addEventListener('click', function() {
-      var src = card.getAttribute('data-video');
-      cards.forEach(function(c){ c.classList.remove('active'); });
-      card.classList.add('active');
-      if (descEl)  descEl.textContent  = card.getAttribute('data-desc')  || '';
-      if (likesEl) likesEl.textContent = card.getAttribute('data-likes') || '';
-      if (viewsEl) viewsEl.textContent = card.getAttribute('data-views') || '';
+  // Helper to flash play, pause, or volume indicators on the screen
+  const flashIndicator = (icon) => {
+    if (phoneMuteIndicator) {
+      phoneMuteIndicator.textContent = icon;
+      phoneMuteIndicator.style.display = 'none';
+      void phoneMuteIndicator.offsetWidth; // trigger reflow
+      phoneMuteIndicator.style.display = 'flex';
       
-      // Unmute because user clicked a card
-      vid.muted = false;
-      vid.volume = 1;
-      if (hint) { hint.classList.add('hidden'); }
+      // Hide after animation finishes
+      setTimeout(() => {
+        phoneMuteIndicator.style.display = 'none';
+      }, 700);
+    }
+  };
 
-      if (src) {
-        // Check if we need to load a new source or just play the current one
-        var currentSrc = vid.src || '';
-        var isSameSrc = decodeURIComponent(currentSrc).endsWith(src);
+  // Click on the phone screen to toggle Mute/Unmute (sound on/off)
+  if (phoneScreen) {
+    phoneScreen.addEventListener('click', (e) => {
+      // Ignore clicks on buttons/interactive elements on the right or bottom
+      if (e.target.closest('.phone-reels-right') || e.target.closest('.phone-follow-btn')) {
+        return;
+      }
+
+      phoneVideo.muted = !phoneVideo.muted;
+      flashIndicator(phoneVideo.muted ? '🔇' : '🔊');
+    });
+  }
+
+  videoCards.forEach(card => {
+    const previewVideo = card.querySelector('video');
+
+    // 1. Silent Preview Hover Autoplay
+    card.addEventListener('mouseenter', () => {
+      if (previewVideo) {
+        previewVideo.play().catch(() => {});
+      }
+    });
+
+    card.addEventListener('mouseleave', () => {
+      if (previewVideo) {
+        previewVideo.pause();
+        previewVideo.currentTime = 0;
+      }
+    });
+
+    // 2. Click to load inside phone mockup
+    card.addEventListener('click', () => {
+      // Remove active class from all cards
+      videoCards.forEach(c => c.classList.remove('active'));
+      // Add active class to clicked card
+      card.classList.add('active');
+
+      const videoSrc = card.getAttribute('data-video');
+      const likes = card.getAttribute('data-likes');
+      const views = card.getAttribute('data-views');
+      const desc = card.getAttribute('data-desc');
+
+      if (videoSrc) {
+        // Change phone video source and unmute it since the user interacted by clicking
+        phoneVideo.src = videoSrc;
+        phoneVideo.muted = false;
+        phoneVideo.load();
         
-        if (!isSameSrc) {
-          vid.src = src;
-          vid.load();
-        } else {
-          vid.currentTime = 0;
-        }
-        
-        vid.play().catch(function(err){ console.warn(err); });
+        // Play the video with sound!
+        phoneVideo.play().then(() => {
+          flashIndicator('🔊');
+        }).catch(() => {
+          // If browser still blocks, fallback to muted autoplay
+          phoneVideo.muted = true;
+          phoneVideo.play().catch(() => {});
+        });
+
+        // Update stats and description
+        if (phoneLikes) phoneLikes.textContent = likes || '0';
+        if (phoneViews) phoneViews.textContent = views || '0';
+        if (phoneVideoDesc) phoneVideoDesc.textContent = desc || '';
       }
     });
   });
+}
 
-}());
+
+

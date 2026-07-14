@@ -819,75 +819,10 @@ a { text-decoration: none; color: inherit; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-/* Unmute hint badge */
-.unmute-hint {
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 20px;
-  padding: 5px 10px;
-  color: #fff;
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  z-index: 20;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-.unmute-hint.hidden { opacity: 0; }
-
-/* Placeholder shown before any card is clicked */
-.phone-placeholder {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, #1c0a1a 0%, #0a0508 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  z-index: 8;
-}
-
-.phone-placeholder-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: rgba(212, 175, 55, 0.15);
-  border: 2px solid rgba(212, 175, 55, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: pulseGlow 2s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.3); }
-  50%       { box-shadow: 0 0 0 12px rgba(212,175,55,0); }
-}
-
-.phone-placeholder-text {
-  color: rgba(255,235,195,0.7);
-  font-family: var(--font-heading);
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-align: center;
-  line-height: 1.5;
-  margin: 0;
-  text-transform: uppercase;
-}
-
-
+/* Instagram Reels UI Mockup Overlay */
 .phone-reels-overlay {
   position: absolute;
   inset: 0;
@@ -1114,47 +1049,6 @@ a { text-decoration: none; color: inherit; }
   opacity: 0.8;
   max-width: 250px;
   line-height: 1.4;
-}
-
-/* Phone Navigation Controls */
-.phone-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin: 15px 0 10px 0;
-}
-
-.phone-control-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--white);
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-}
-
-.phone-control-btn:hover {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: #111;
-  transform: translateY(-2px);
-}
-
-.phone-control-btn:active {
-  transform: translateY(0) scale(0.95);
-}
-
-.phone-control-btn svg {
-  width: 20px;
-  height: 20px;
 }
 
 /* Video Card Thumbnail Preview Hover */
