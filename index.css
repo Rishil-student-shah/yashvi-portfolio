@@ -822,6 +822,42 @@ a { text-decoration: none; color: inherit; }
   display: block;
 }
 
+.phone-pause-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 35;
+  pointer-events: none;
+}
+
+.phone-pause-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.phone-pause-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--white);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.15em;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
 /* Instagram Reels UI Mockup Overlay */
 .phone-reels-overlay {
   position: absolute;

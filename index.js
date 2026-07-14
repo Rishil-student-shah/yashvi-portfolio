@@ -225,6 +225,7 @@ const phoneVideoDesc = document.getElementById('phoneVideoDesc');
 const phoneLikes = document.getElementById('phoneLikes');
 const phoneViews = document.getElementById('phoneViews');
 const phoneMuteIndicator = document.getElementById('phoneMuteIndicator');
+const phonePauseOverlay = document.getElementById('phonePauseOverlay');
 const audioDisc = document.querySelector('.phone-audio-disc');
 const videoCards = document.querySelectorAll('.work-card.video-card');
 const phoneScreen = document.querySelector('.phone-screen');
@@ -245,9 +246,16 @@ if (phoneVideo && videoCards.length > 0) {
     }, 700);
   };
 
+  const setPausedOverlay = (isVisible) => {
+    if (!phonePauseOverlay) return;
+    phonePauseOverlay.classList.toggle('visible', isVisible);
+    phonePauseOverlay.setAttribute('aria-hidden', String(!isVisible));
+  };
+
   const playReel = async () => {
     try {
       await phoneVideo.play();
+      setPausedOverlay(false);
       setIndicator('▶');
       return true;
     } catch (_error) {
@@ -257,6 +265,7 @@ if (phoneVideo && videoCards.length > 0) {
 
   const pauseReel = () => {
     phoneVideo.pause();
+    setPausedOverlay(true);
     setIndicator('⏸');
   };
 
@@ -279,6 +288,7 @@ if (phoneVideo && videoCards.length > 0) {
       phoneVideo.addEventListener('loadedmetadata', () => {
         phoneVideo.currentTime = 0;
         phoneVideo.pause();
+        setPausedOverlay(true);
       }, { once: true });
 
       if (phoneLikes) phoneLikes.textContent = likes || '0';
@@ -289,20 +299,25 @@ if (phoneVideo && videoCards.length > 0) {
 
   // Start in paused mode so the first reel shows a paused frame.
   phoneVideo.muted = false;
+  setPausedOverlay(true);
 
   phoneVideo.addEventListener('loadeddata', () => {
     phoneVideo.pause();
+    setPausedOverlay(true);
   });
 
   // Sync rotating audio disc animation with video play state
   phoneVideo.addEventListener('play', () => {
     if (audioDisc) audioDisc.classList.add('playing');
+    setPausedOverlay(false);
   });
   
   phoneVideo.addEventListener('pause', () => {
     if (audioDisc) audioDisc.classList.remove('playing');
+    setPausedOverlay(true);
   });
   phoneVideo.pause();
+  setPausedOverlay(true);
 
   // Click on the phone screen toggles play/pause only. Audio is controlled separately.
   if (phoneScreen) {
