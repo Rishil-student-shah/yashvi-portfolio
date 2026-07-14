@@ -600,12 +600,11 @@ a { text-decoration: none; color: inherit; }
   font-weight: 500;
 }
 
-/* About right — decorative images */
+/* About right — single centered portrait photo */
 .about-right {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 240px 240px;
-  gap: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
 }
 
@@ -622,12 +621,13 @@ a { text-decoration: none; color: inherit; }
   gap: 12px;
   color: rgba(255, 235, 195, 0.4);
   transition: transform var(--transition), box-shadow var(--transition);
+  width: 340px; /* Perfectly sized portrait card */
+  height: 480px;
 }
 .about-img-placeholder:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
-.about-img-placeholder:first-child { grid-row: span 2; }
 
 
 .placeholder-icon {
@@ -1960,8 +1960,9 @@ body {
   .skills-grid { grid-template-columns: repeat(3, 1fr); }
   .work-grid   { grid-template-columns: repeat(2, 1fr); }
 
-  .about-right {
-    grid-template-rows: 200px 200px;
+  .about-img-placeholder {
+    width: 290px;
+    height: 410px;
   }
 }
 
