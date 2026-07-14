@@ -309,9 +309,16 @@ if (phoneVideo && videoCards.length > 0) {
     const desc = card.getAttribute('data-desc');
 
     if (videoSrc) {
-      phoneVideo.src = videoSrc;
+      const currentSrcPath = phoneVideo.getAttribute('src');
+      if (currentSrcPath !== videoSrc) {
+        phoneVideo.src = videoSrc;
+        phoneVideo.load();
+      } else {
+        // If same source, just rewind to the beginning
+        phoneVideo.currentTime = 0;
+      }
+      
       phoneVideo.muted = false;
-      phoneVideo.load();
       
       phoneVideo.play().then(() => {
         flashIndicator('▶');
