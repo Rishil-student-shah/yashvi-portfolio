@@ -394,8 +394,6 @@ if (phoneVideo && videoCards.length > 0) {
   }
 
   videoCards.forEach(card => {
-    const previewVideo = card.querySelector('video');
-
     // 2. Click to load inside phone mockup
     card.addEventListener('click', () => {
       loadReelFromCard(card);

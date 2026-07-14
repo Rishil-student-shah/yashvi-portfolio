@@ -1114,26 +1114,12 @@ a { text-decoration: none; color: inherit; }
   cursor: pointer;
 }
 
-/* Video Card Thumbnail Preview Hover */
-.video-card .work-card-img video {
+/* Static Thumbnail Cards */
+.work-card-thumb {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  opacity: 0.85;
-  transition: opacity var(--transition);
-}
-
-.video-card .work-card-img::after {
-  display: none;
-}
-
-.video-card:hover .work-card-img::after {
-  display: none;
-}
-
-.video-card:hover .work-card-img video {
-  opacity: 1;
 }
 
 /* Floating overlay stats on card thumbnails */
