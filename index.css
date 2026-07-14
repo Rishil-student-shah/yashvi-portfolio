@@ -622,7 +622,7 @@ a { text-decoration: none; color: inherit; }
   color: rgba(255, 235, 195, 0.4);
   transition: transform var(--transition), box-shadow var(--transition);
   width: 340px; /* Perfectly sized portrait card */
-  height: 480px;
+  height: 560px; /* Stretched taller to match left text column */
 }
 .about-img-placeholder:hover {
   transform: translateY(-4px);
@@ -1962,7 +1962,7 @@ body {
 
   .about-img-placeholder {
     width: 290px;
-    height: 410px;
+    height: 480px;
   }
 }
 
