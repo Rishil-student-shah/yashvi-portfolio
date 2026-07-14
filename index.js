@@ -243,8 +243,12 @@ const phoneViews = document.getElementById('phoneViews');
 const phoneMuteIndicator = document.getElementById('phoneMuteIndicator');
 const audioDisc = document.querySelector('.phone-audio-disc');
 const videoCards = document.querySelectorAll('.work-card.video-card');
+const phoneScreen = document.querySelector('.phone-screen');
 
 if (phoneVideo && videoCards.length > 0) {
+  // Initialize video as muted so autoplay is allowed by the browser
+  phoneVideo.muted = true;
+
   // Sync rotating audio disc animation with video play state
   phoneVideo.addEventListener('play', () => {
     if (audioDisc) audioDisc.classList.add('playing');
@@ -269,19 +273,33 @@ if (phoneVideo && videoCards.length > 0) {
     }
   };
 
-  // Tap screen to toggle Play/Pause
-  const togglePlayPause = () => {
-    if (phoneVideo.paused) {
-      phoneVideo.play().then(() => {
-        flashIndicator('▶');
-      }).catch(() => {});
-    } else {
-      phoneVideo.pause();
-      flashIndicator('⏸');
-    }
-  };
+  // Click on the phone screen to toggle Play/Pause/Mute
+  if (phoneScreen) {
+    phoneScreen.addEventListener('click', (e) => {
+      // Ignore clicks on buttons/interactive elements on the right or bottom
+      if (e.target.closest('.phone-reels-right') || e.target.closest('.phone-follow-btn')) {
+        return;
+      }
 
-  phoneVideo.addEventListener('click', togglePlayPause);
+      if (phoneVideo.paused) {
+        // If it's paused, play it and ensure it's unmuted
+        phoneVideo.muted = false;
+        phoneVideo.play().then(() => {
+          flashIndicator('▶');
+        }).catch(() => {});
+      } else {
+        // If it's playing but currently muted (e.g. just loaded), unmute it first!
+        if (phoneVideo.muted) {
+          phoneVideo.muted = false;
+          flashIndicator('🔊');
+        } else {
+          // If it's playing and already unmuted, pause it!
+          phoneVideo.pause();
+          flashIndicator('⏸');
+        }
+      }
+    });
+  }
 
   videoCards.forEach(card => {
     const previewVideo = card.querySelector('video');
