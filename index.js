@@ -254,13 +254,10 @@ if (phoneVideo && videoCards.length > 0) {
     if (audioDisc) audioDisc.classList.remove('playing');
   });
 
-  // Tap screen to toggle Mute/Unmute
-  const toggleMute = () => {
-    phoneVideo.muted = !phoneVideo.muted;
-    
+  // Helper to flash play, pause, or volume indicators on the screen
+  const flashIndicator = (icon) => {
     if (phoneMuteIndicator) {
-      phoneMuteIndicator.textContent = phoneVideo.muted ? '🔇' : '🔊';
-      // Restart CSS animation by rebuilding element or cloning it
+      phoneMuteIndicator.textContent = icon;
       phoneMuteIndicator.style.display = 'none';
       void phoneMuteIndicator.offsetWidth; // trigger reflow
       phoneMuteIndicator.style.display = 'flex';
@@ -272,7 +269,19 @@ if (phoneVideo && videoCards.length > 0) {
     }
   };
 
-  phoneVideo.addEventListener('click', toggleMute);
+  // Tap screen to toggle Play/Pause
+  const togglePlayPause = () => {
+    if (phoneVideo.paused) {
+      phoneVideo.play().then(() => {
+        flashIndicator('▶');
+      }).catch(() => {});
+    } else {
+      phoneVideo.pause();
+      flashIndicator('⏸');
+    }
+  };
+
+  phoneVideo.addEventListener('click', togglePlayPause);
 
   videoCards.forEach(card => {
     const previewVideo = card.querySelector('video');
@@ -311,14 +320,7 @@ if (phoneVideo && videoCards.length > 0) {
         
         // Play the video with sound!
         phoneVideo.play().then(() => {
-          // Temporarily show the sound indicator unmuted
-          if (phoneMuteIndicator) {
-            phoneMuteIndicator.textContent = '🔊';
-            phoneMuteIndicator.style.display = 'flex';
-            setTimeout(() => {
-              phoneMuteIndicator.style.display = 'none';
-            }, 700);
-          }
+          flashIndicator('🔊');
         }).catch(() => {
           // If browser still blocks, fallback to muted autoplay
           phoneVideo.muted = true;
