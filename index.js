@@ -235,125 +235,115 @@ if (lightbox && igPosts.length > 0) {
   });
 }
 
-/* ─────────── Phone Mockup Video Player ─────────── */
+
+/* ----------- Phone Mockup Video Player ----------- */
 (function () {
-  var vid      = document.getElementById('phoneVideo');
-  var cards    = Array.from(document.querySelectorAll('.work-card.video-card'));
-  var prevBtn  = document.getElementById('prevBtn');
-  var nextBtn  = document.getElementById('nextBtn');
-  var ppBtn    = document.getElementById('playPauseBtn');
-  var playIco  = ppBtn && ppBtn.querySelector('.play-icon');
-  var pauseIco = ppBtn && ppBtn.querySelector('.pause-icon');
-  var descEl   = document.getElementById('phoneVideoDesc');
-  var likesEl  = document.getElementById('phoneLikes');
-  var viewsEl  = document.getElementById('phoneViews');
-  var disc     = document.querySelector('.phone-audio-disc');
-  var flash    = document.getElementById('phoneMuteIndicator');
+  var vid     = document.getElementById('phoneVideo');
+  var cards   = Array.from(document.querySelectorAll('.work-card.video-card'));
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var ppBtn   = document.getElementById('playPauseBtn');
+  var playIco = ppBtn && ppBtn.querySelector('.play-icon');
+  var pauseIco= ppBtn && ppBtn.querySelector('.pause-icon');
+  var descEl  = document.getElementById('phoneVideoDesc');
+  var likesEl = document.getElementById('phoneLikes');
+  var viewsEl = document.getElementById('phoneViews');
+  var disc    = document.querySelector('.phone-audio-disc');
 
   if (!vid || cards.length === 0) return;
 
-  var current = 0; // index of the active card
+  var current = 0;
 
-  /* ── helpers ─────────────────────────────────── */
-  function showPlayIcon() {
+  function showPlay()  {
     if (playIco)  playIco.style.display  = 'block';
     if (pauseIco) pauseIco.style.display = 'none';
   }
-  function showPauseIcon() {
+  function showPause() {
     if (playIco)  playIco.style.display  = 'none';
     if (pauseIco) pauseIco.style.display = 'block';
   }
-  function flashIcon(icon) {
-    if (!flash) return;
-    flash.textContent = icon;
-    flash.style.display = 'flex';
-    setTimeout(function () { flash.style.display = 'none'; }, 700);
-  }
-  function setActiveCard(idx) {
-    cards.forEach(function (c) { c.classList.remove('active'); });
+
+  function activateCard(idx) {
+    cards.forEach(function(c){ c.classList.remove('active'); });
     cards[idx].classList.add('active');
     current = idx;
-    var src   = cards[idx].getAttribute('data-video')  || '';
-    var likes = cards[idx].getAttribute('data-likes')  || '';
-    var views = cards[idx].getAttribute('data-views')  || '';
-    var desc  = cards[idx].getAttribute('data-desc')   || '';
-    if (descEl)  descEl.textContent  = desc;
-    if (likesEl) likesEl.textContent = likes;
-    if (viewsEl) viewsEl.textContent = views;
-    return src;
+    if (descEl)  descEl.textContent  = cards[idx].getAttribute('data-desc')  || '';
+    if (likesEl) likesEl.textContent = cards[idx].getAttribute('data-likes') || '';
+    if (viewsEl) viewsEl.textContent = cards[idx].getAttribute('data-views') || '';
   }
 
-  /* ── play with sound (needs a prior user gesture) ── */
-  function playWithSound(src) {
-    if (src && vid.getAttribute('src') !== src) {
-      vid.src = src;
-    } else {
-      vid.currentTime = 0;
-    }
+  /* doPlay � must be called from inside a real click handler */
+  function doPlay() {
     vid.muted  = false;
     vid.volume = 1;
-    vid.play().then(function () {
-      showPauseIcon();
-      flashIcon('▶');
+    vid.play().then(function() {
+      showPause();
       if (disc) disc.classList.add('playing');
-    }).catch(function (err) {
-      console.warn('play() failed:', err.message);
+    }).catch(function(err) {
+      console.warn('play blocked:', err.message);
+      showPlay();
     });
   }
 
-  /* ── play/pause button ──────────────────────── */
+  /* Play / Pause button */
   if (ppBtn) {
-    ppBtn.addEventListener('click', function () {
+    ppBtn.addEventListener('click', function() {
       if (vid.paused) {
-        playWithSound(cards[current].getAttribute('data-video'));
+        doPlay();
       } else {
         vid.pause();
-        showPlayIcon();
-        flashIcon('⏸');
-        if (disc) disc.classList.remove('playing');
+        /* pause event updates icon */
       }
     });
   }
 
-  /* ── prev / next buttons ────────────────────── */
+  /* Prev button */
   if (prevBtn) {
-    prevBtn.addEventListener('click', function () {
+    prevBtn.addEventListener('click', function() {
       var idx = (current - 1 + cards.length) % cards.length;
-      playWithSound(setActiveCard(idx));
-    });
-  }
-  if (nextBtn) {
-    nextBtn.addEventListener('click', function () {
-      var idx = (current + 1) % cards.length;
-      playWithSound(setActiveCard(idx));
+      activateCard(idx);
+      vid.currentTime = 0;
+      doPlay();
     });
   }
 
-  /* ── card click ─────────────────────────────── */
-  cards.forEach(function (card, idx) {
+  /* Next button */
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function() {
+      var idx = (current + 1) % cards.length;
+      activateCard(idx);
+      vid.currentTime = 0;
+      doPlay();
+    });
+  }
+
+  /* Card clicks */
+  cards.forEach(function(card, idx) {
     var thumb = card.querySelector('video');
-    card.addEventListener('mouseenter', function () {
+    card.addEventListener('mouseenter', function() {
       if (thumb) thumb.play().catch(function(){});
     });
-    card.addEventListener('mouseleave', function () {
+    card.addEventListener('mouseleave', function() {
       if (thumb) { thumb.pause(); thumb.currentTime = 0; }
     });
-    card.addEventListener('click', function () {
-      playWithSound(setActiveCard(idx));
+    card.addEventListener('click', function() {
+      activateCard(idx);
+      vid.currentTime = 0;
+      doPlay();
     });
   });
 
-  /* ── keep disc in sync if video ends / pauses ── */
-  vid.addEventListener('pause', function () {
+  /* Keep icons in sync with actual video state */
+  vid.addEventListener('pause', function() {
+    showPlay();
     if (disc) disc.classList.remove('playing');
-    showPlayIcon();
   });
-  vid.addEventListener('play', function () {
+  vid.addEventListener('play', function() {
+    showPause();
     if (disc) disc.classList.add('playing');
-    showPauseIcon();
   });
 
-  /* ── initial state: show play icon ─────────── */
-  showPlayIcon();
+  /* Start: show play icon (video is paused on load) */
+  showPlay();
 
 }());
