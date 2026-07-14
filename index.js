@@ -307,7 +307,7 @@ if (phoneVideo && videoCards.length > 0) {
   const pauseReel = () => {
     phoneVideo.pause();
     setPausedOverlay(true);
-    setIndicator('⏸');
+    setIndicator('▶');
   };
 
   const loadReelFromCard = (card) => {
