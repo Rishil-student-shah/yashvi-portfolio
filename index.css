@@ -819,10 +819,51 @@ a { text-decoration: none; color: inherit; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
-/* Instagram Reels UI Mockup Overlay */
+/* Placeholder shown before any card is clicked */
+.phone-placeholder {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #1c0a1a 0%, #0a0508 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  z-index: 8;
+}
+
+.phone-placeholder-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.3); }
+  50%       { box-shadow: 0 0 0 12px rgba(212,175,55,0); }
+}
+
+.phone-placeholder-text {
+  color: rgba(255,235,195,0.7);
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+
 .phone-reels-overlay {
   position: absolute;
   inset: 0;

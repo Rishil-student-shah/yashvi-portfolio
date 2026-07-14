@@ -123,10 +123,18 @@
         <div class="phone-screen">
           <div class="phone-notch"></div>
           
-          <!-- Video starts paused; Play button below gives the user gesture needed for sound -->
-          <video id="phoneVideo" class="phone-video-player" src="images/reel 1.mp4" loop playsinline preload="auto"></video>
-          
-          <!-- Center overlay indicator (play / pause flash) -->
+          <!-- Video: no src on load. Card click sets src and plays with sound -->
+          <video id="phoneVideo" class="phone-video-player" loop playsinline style="display:none;"></video>
+
+          <!-- Placeholder shown until a card is clicked -->
+          <div id="phonePlaceholder" class="phone-placeholder">
+            <div class="phone-placeholder-icon">
+              <svg viewBox="0 0 24 24" fill="white" width="44" height="44"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <p class="phone-placeholder-text">Click a card<br/>to watch the reel</p>
+          </div>
+
+          <!-- Center flash indicator -->
           <div id="phoneMuteIndicator" class="phone-mute-indicator" style="display:none;">▶</div>
 
           <!-- Instagram UI Overlay -->
@@ -204,7 +212,7 @@
         </button>
       </div>
 
-      <span class="phone-instruction">▶ Press Play to watch with sound</span>
+      <span class="phone-instruction">👆 Click the card to play the reel with sound</span>
     </div>
 
     <!-- Right Column: Gallery Cards Grid -->

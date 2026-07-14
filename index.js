@@ -238,23 +238,26 @@ if (lightbox && igPosts.length > 0) {
 
 /* ----------- Phone Mockup Video Player ----------- */
 (function () {
-  var vid     = document.getElementById('phoneVideo');
-  var cards   = Array.from(document.querySelectorAll('.work-card.video-card'));
-  var prevBtn = document.getElementById('prevBtn');
-  var nextBtn = document.getElementById('nextBtn');
-  var ppBtn   = document.getElementById('playPauseBtn');
-  var playIco = ppBtn && ppBtn.querySelector('.play-icon');
-  var pauseIco= ppBtn && ppBtn.querySelector('.pause-icon');
-  var descEl  = document.getElementById('phoneVideoDesc');
-  var likesEl = document.getElementById('phoneLikes');
-  var viewsEl = document.getElementById('phoneViews');
-  var disc    = document.querySelector('.phone-audio-disc');
+  var vid         = document.getElementById('phoneVideo');
+  var placeholder = document.getElementById('phonePlaceholder');
+  var cards       = Array.from(document.querySelectorAll('.work-card.video-card'));
+  var prevBtn     = document.getElementById('prevBtn');
+  var nextBtn     = document.getElementById('nextBtn');
+  var ppBtn       = document.getElementById('playPauseBtn');
+  var playIco     = ppBtn && ppBtn.querySelector('.play-icon');
+  var pauseIco    = ppBtn && ppBtn.querySelector('.pause-icon');
+  var descEl      = document.getElementById('phoneVideoDesc');
+  var likesEl     = document.getElementById('phoneLikes');
+  var viewsEl     = document.getElementById('phoneViews');
+  var disc        = document.querySelector('.phone-audio-disc');
 
   if (!vid || cards.length === 0) return;
 
-  var current = 0;
+  var current    = 0;
+  var hasLoaded  = false; /* true once user has clicked a card at least once */
 
-  function showPlay()  {
+  /* -- icon state --------------------------------- */
+  function showPlay() {
     if (playIco)  playIco.style.display  = 'block';
     if (pauseIco) pauseIco.style.display = 'none';
   }
@@ -263,6 +266,7 @@ if (lightbox && igPosts.length > 0) {
     if (pauseIco) pauseIco.style.display = 'block';
   }
 
+  /* -- update overlay stats ----------------------- */
   function activateCard(idx) {
     cards.forEach(function(c){ c.classList.remove('active'); });
     cards[idx].classList.add('active');
@@ -270,12 +274,27 @@ if (lightbox && igPosts.length > 0) {
     if (descEl)  descEl.textContent  = cards[idx].getAttribute('data-desc')  || '';
     if (likesEl) likesEl.textContent = cards[idx].getAttribute('data-likes') || '';
     if (viewsEl) viewsEl.textContent = cards[idx].getAttribute('data-views') || '';
+    return cards[idx].getAttribute('data-video') || '';
   }
 
-  /* doPlay — must be called from inside a real click handler */
-  function doPlay() {
+  /* -- load & play — ONLY called from real user clicks -- */
+  function loadAndPlay(src) {
+    /* Hide placeholder, reveal video element */
+    if (placeholder) placeholder.style.display = 'none';
+    vid.style.display = 'block';
+
+    /* Set source if first time or different file */
+    if (!hasLoaded || vid.getAttribute('src') !== src) {
+      vid.src = src;
+      vid.load();
+      hasLoaded = true;
+    } else {
+      vid.currentTime = 0;
+    }
+
     vid.muted  = false;
     vid.volume = 1;
+
     vid.play().then(function() {
       showPause();
       if (disc) disc.classList.add('playing');
@@ -285,55 +304,57 @@ if (lightbox && igPosts.length > 0) {
     });
   }
 
-  /* Play / Pause button */
-  if (ppBtn) {
-    ppBtn.addEventListener('click', function() {
-      if (vid.paused) {
-        doPlay();
-      } else {
-        vid.pause();
-        /* pause event updates icon */
-      }
-    });
-  }
-
-  /* Prev button */
-  if (prevBtn) {
-    prevBtn.addEventListener('click', function() {
-      var idx = (current - 1 + cards.length) % cards.length;
-      activateCard(idx);
-      vid.currentTime = 0;
-      doPlay();
-    });
-  }
-
-  /* Next button */
-  if (nextBtn) {
-    nextBtn.addEventListener('click', function() {
-      var idx = (current + 1) % cards.length;
-      activateCard(idx);
-      vid.currentTime = 0;
-      doPlay();
-    });
-  }
-
-  /* Card clicks */
+  /* -- Card click (MAIN entry point for first play) -- */
   cards.forEach(function(card, idx) {
     var thumb = card.querySelector('video');
+
     card.addEventListener('mouseenter', function() {
       if (thumb) thumb.play().catch(function(){});
     });
     card.addEventListener('mouseleave', function() {
       if (thumb) { thumb.pause(); thumb.currentTime = 0; }
     });
+
     card.addEventListener('click', function() {
-      activateCard(idx);
-      vid.currentTime = 0;
-      doPlay();
+      loadAndPlay(activateCard(idx));
     });
   });
 
-  /* Keep icons in sync with actual video state */
+  /* -- Play / Pause button ------------------------ */
+  if (ppBtn) {
+    ppBtn.addEventListener('click', function() {
+      if (!hasLoaded) {
+        /* Nothing loaded yet — load the first card */
+        loadAndPlay(activateCard(0));
+        return;
+      }
+      if (vid.paused) {
+        vid.muted  = false;
+        vid.volume = 1;
+        vid.play().catch(function(err){ console.warn(err); });
+      } else {
+        vid.pause();
+      }
+    });
+  }
+
+  /* -- Prev button -------------------------------- */
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function() {
+      var idx = (current - 1 + cards.length) % cards.length;
+      loadAndPlay(activateCard(idx));
+    });
+  }
+
+  /* -- Next button -------------------------------- */
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function() {
+      var idx = (current + 1) % cards.length;
+      loadAndPlay(activateCard(idx));
+    });
+  }
+
+  /* -- Sync icons with actual video state --------- */
   vid.addEventListener('pause', function() {
     showPlay();
     if (disc) disc.classList.remove('playing');
@@ -343,7 +364,7 @@ if (lightbox && igPosts.length > 0) {
     if (disc) disc.classList.add('playing');
   });
 
-  /* Start: show play icon (video is paused on load) */
+  /* -- Initial button state: show play icon ------- */
   showPlay();
 
 }());
