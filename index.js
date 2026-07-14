@@ -205,3 +205,71 @@ if (contactForm) {
   });
 }
 
+/* ─────────── Instagram Lightbox Modal with Slider ─────────── */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxCaption = document.getElementById('lightbox-caption');
+const lightboxClose = lightbox && lightbox.querySelector('.lightbox-close');
+const lightboxPrev = lightbox && lightbox.querySelector('.lightbox-prev');
+const lightboxNext = lightbox && lightbox.querySelector('.lightbox-next');
+const igPosts = Array.from(document.querySelectorAll('.ig-post'));
+
+let currentPostIndex = 0;
+
+if (lightbox && igPosts.length > 0) {
+  // Helper to open lightbox and show specific post
+  const showPost = (index) => {
+    currentPostIndex = (index + igPosts.length) % igPosts.length;
+    const postEl = igPosts[currentPostIndex];
+    const imgEl = postEl.querySelector('img');
+    
+    if (imgEl) {
+      lightboxImg.src = imgEl.src;
+      lightboxImg.alt = imgEl.alt;
+      lightboxCaption.textContent = imgEl.alt || `Post ${currentPostIndex + 1}`;
+      
+      // Update accessibility attributes
+      lightbox.setAttribute('aria-hidden', 'false');
+      lightboxClose.focus();
+    }
+  };
+
+  // Close lightbox
+  const closeLightbox = () => {
+    lightbox.setAttribute('aria-hidden', 'true');
+  };
+
+  // Attach click listener to each post
+  igPosts.forEach((post, index) => {
+    post.addEventListener('click', () => {
+      showPost(index);
+    });
+  });
+
+  // Event handlers
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', () => showPost(currentPostIndex - 1));
+  lightboxNext.addEventListener('click', () => showPost(currentPostIndex + 1));
+
+  // Close on clicking overlay background
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) {
+      closeLightbox();
+    }
+  });
+
+  // Keyboard navigation (Esc to close, Left/Right arrows to change side)
+  document.addEventListener('keydown', (e) => {
+    if (lightbox.getAttribute('aria-hidden') === 'false') {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      } else if (e.key === 'ArrowLeft') {
+        showPost(currentPostIndex - 1);
+      } else if (e.key === 'ArrowRight') {
+        showPost(currentPostIndex + 1);
+      }
+    }
+  });
+}
+
+
