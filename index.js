@@ -624,5 +624,211 @@ if (phoneVideo && videoCards.length > 0) {
   }
 }
 
+/* ==========================================================
+   SKILLS SHOWCASE
+========================================================== */
 
+const showcase = document.getElementById("skillsShowcase");
 
+if (showcase) {
+
+    const showcaseImg = document.getElementById("showcaseImage");
+    const showcaseVideo = document.getElementById("showcaseVideo");
+
+    const showcaseTitle = document.getElementById("showcaseTitle");
+    const showcaseCategory = document.getElementById("showcaseCategory");
+    const showcaseDescription = document.getElementById("showcaseDescription");
+
+    const showcaseCurrent = document.getElementById("showcaseCurrent");
+    const showcaseTotal = document.getElementById("showcaseTotal");
+
+    const showcasePrev = document.getElementById("showcasePrev");
+    const showcaseNext = document.getElementById("showcaseNext");
+
+    const buttons = document.querySelectorAll(".skill-open-btn");
+
+    let activeItems = [];
+    let activeIndex = 0;
+
+    const showcaseData = {
+
+        bts: [
+
+            {
+                type: "video",
+                src: "images/BTS 1.mp4",
+                title: "Behind The Scenes 01",
+                category: "BTS Videography",
+                description: "Creative product shoot."
+            },
+
+            {
+                type: "video",
+                src: "images/BTS 2.mp4",
+                title: "Behind The Scenes 02",
+                category: "BTS Videography",
+                description: "Production workflow."
+            },
+
+            {
+                type: "video",
+                src: "images/BTS 3.mp4",
+                title: "Behind The Scenes 03",
+                category: "BTS Videography",
+                description: "Brand storytelling."
+            }
+
+        ],
+
+        smm: [
+
+            {
+                type:"image",
+                src:"images/SMM 1.jpeg",
+                title:"Campaign 01",
+                category:"Social Media",
+                description:"Creative Campaign"
+            },
+
+            {
+                type:"image",
+                src:"images/SMM 2.jpeg",
+                title:"Campaign 02",
+                category:"Social Media",
+                description:"Creative Campaign"
+            },
+
+            {
+                type:"image",
+                src:"images/SMM 3.jpeg",
+                title:"Campaign 03",
+                category:"Social Media",
+                description:"Creative Campaign"
+            },
+
+            {
+                type:"image",
+                src:"images/SMM 4.jpeg",
+                title:"Campaign 04",
+                category:"Social Media",
+                description:"Creative Campaign"
+            },
+
+            {
+                type:"image",
+                src:"images/SMM 5.jpeg",
+                title:"Campaign 05",
+                category:"Social Media",
+                description:"Creative Campaign"
+            },
+
+            {
+                type:"image",
+                src:"images/SMM 6.jpeg",
+                title:"Campaign 06",
+                category:"Social Media",
+                description:"Creative Campaign"
+            },
+
+            {
+                type:"image",
+                src:"images/SMM 7.jpeg",
+                title:"Campaign 07",
+                category:"Social Media",
+                description:"Creative Campaign"
+            }
+
+        ]
+
+    };
+
+    function renderShowcase() {
+
+        const item = activeItems[activeIndex];
+
+        showcase.classList.add("active");
+        showcase.hidden = false;
+
+        showcaseCurrent.textContent = activeIndex + 1;
+        showcaseTotal.textContent = activeItems.length;
+
+        showcaseTitle.textContent = item.title;
+        showcaseCategory.textContent = item.category;
+        showcaseDescription.textContent = item.description;
+
+        if (item.type === "video") {
+
+            showcaseImg.hidden = true;
+
+            showcaseVideo.hidden = false;
+
+            showcaseVideo.pause();
+            showcaseVideo.src = item.src;
+            showcaseVideo.load();
+            showcaseVideo.play().catch(() => {});
+
+        } else {
+
+            showcaseVideo.pause();
+            showcaseVideo.removeAttribute("src");
+            showcaseVideo.load();
+
+            showcaseVideo.hidden = true;
+
+            showcaseImg.hidden = false;
+            showcaseImg.src = item.src;
+
+        }
+
+        showcase.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+    buttons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const group = button.dataset.showcase;
+
+            activeItems = showcaseData[group];
+
+            activeIndex = 0;
+
+            renderShowcase();
+
+        });
+
+    });
+
+    showcaseNext.addEventListener("click", () => {
+
+        activeIndex++;
+
+        if (activeIndex >= activeItems.length) {
+
+            activeIndex = 0;
+
+        }
+
+        renderShowcase();
+
+    });
+
+    showcasePrev.addEventListener("click", () => {
+
+        activeIndex--;
+
+        if (activeIndex < 0) {
+
+            activeIndex = activeItems.length - 1;
+
+        }
+
+        renderShowcase();
+
+    });
+
+}

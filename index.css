@@ -645,210 +645,319 @@ a { text-decoration: none; color: inherit; }
 /* ───────────────── SKILLS SECTION ───────────────── */
 
 #skills{
-background:var(--cream);
-padding:100px 80px;
+    background:var(--cream);
+    padding:100px 80px;
 }
 
 .skills-header{
-text-align:center;
-margin-bottom:70px;
+    text-align:center;
+    margin-bottom:60px;
 }
 
 .skills-intro{
-max-width:650px;
-margin:20px auto 0;
-font-size:1rem;
-line-height:1.8;
-color:rgba(43,26,26,.65);
+    max-width:700px;
+    margin:20px auto 0;
+    color:rgba(43,26,26,.75);
+    line-height:1.8;
 }
+
+/* ======================================
+   SHARED SHOWCASE
+====================================== */
+
+.skills-showcase{
+    width:100%;
+    max-width:1350px;
+    margin:0 auto 45px;
+    background:#111;
+    border-radius:26px;
+    overflow:hidden;
+    display:none;
+    box-shadow:0 25px 70px rgba(0,0,0,.18);
+    border:1px solid rgba(255,255,255,.08);
+    animation:showcaseOpen .45s ease;
+}
+
+.skills-showcase.active{
+    display:block;
+}
+
+@keyframes showcaseOpen{
+
+    from{
+        opacity:0;
+        transform:translateY(-25px);
+    }
+
+    to{
+        opacity:1;
+        transform:none;
+    }
+
+}
+
+.showcase-body{
+
+    position:relative;
+    aspect-ratio:16/9;
+    background:#000;
+
+}
+
+.showcase-body img,
+.showcase-body video{
+
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+
+}
+
+.showcase-nav{
+
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:54px;
+    height:54px;
+    border:none;
+    border-radius:50%;
+    background:rgba(0,0,0,.55);
+    color:#fff;
+    font-size:24px;
+    cursor:pointer;
+    z-index:5;
+    transition:.3s;
+
+}
+
+.showcase-prev{
+
+    left:20px;
+
+}
+
+.showcase-next{
+
+    right:20px;
+
+}
+
+.showcase-nav:hover{
+
+    background:var(--red);
+
+}
+
+.showcase-info{
+
+    padding:26px 34px;
+    background:#171717;
+
+}
+
+.showcase-info span{
+
+    display:inline-block;
+    font-size:.75rem;
+    letter-spacing:2px;
+    color:#ffcf7d;
+    text-transform:uppercase;
+    margin-bottom:8px;
+
+}
+
+.showcase-info h3{
+
+    color:#fff;
+    font-size:1.8rem;
+    margin-bottom:10px;
+
+}
+
+.showcase-info p{
+
+    color:rgba(255,255,255,.7);
+    line-height:1.7;
+    margin-bottom:18px;
+
+}
+
+.showcase-count{
+
+    color:#ffe8b0;
+    font-weight:600;
+
+}
+
+/* ======================================
+   GRID
+====================================== */
 
 .skills-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:32px;
-max-width:1400px;
-margin:auto;
-align-items:start;
+
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:34px;
+    max-width:1350px;
+    margin:auto;
+
 }
 
+/* ======================================
+   CARD
+====================================== */
+
 .skill-card-showcase{
-background:#fff;
-border-radius:28px;
-padding:30px;
-border:1px solid rgba(0,0,0,.08);
-box-shadow:0 12px 40px rgba(0,0,0,.06);
+
+    background:#fff;
+    border-radius:28px;
+    overflow:hidden;
+    padding:0;
+    box-shadow:0 18px 60px rgba(0,0,0,.08);
+    transition:.35s;
+    border:1px solid rgba(0,0,0,.06);
+
+}
+
+.skill-card-showcase:hover{
+
+    transform:translateY(-10px);
+
 }
 
 .skill-card-showcase::before{
-display:none;
+
+    display:none;
+
 }
 
-.skill-card-header{
-display:flex;
-align-items:flex-start;
-gap:18px;
-margin-bottom:24px;
+/* ======================================
+   COVER
+====================================== */
+
+.skill-cover{
+
+    position:relative;
+    height:420px;
+    overflow:hidden;
+
 }
 
-.skill-card-header .skill-icon{
-font-size:34px;
-margin:0;
-color:var(--red);
+.skill-cover img{
+
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.6s;
+
 }
 
-.skill-card-header .skill-name{
-margin:0;
-font-size:1.25rem;
+.skill-card-showcase:hover .skill-cover img{
+
+    transform:scale(1.08);
+
 }
 
-.skill-card-header .skill-desc{
-margin-top:8px;
-font-size:.92rem;
-line-height:1.7;
+.skill-cover-overlay{
+
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:32px;
+    background:linear-gradient(
+        to top,
+        rgba(0,0,0,.82),
+        rgba(0,0,0,.15)
+    );
+
 }
 
-.skill-window{
-background:#171717;
-border-radius:18px;
-overflow:hidden;
-border:1px solid rgba(255,255,255,.08);
-box-shadow:0 25px 60px rgba(0,0,0,.25);
+.skill-cover-tag{
+
+    display:inline-flex;
+    width:max-content;
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(12px);
+    color:#fff;
+    padding:8px 16px;
+    border-radius:30px;
+    font-size:.72rem;
+    margin-bottom:16px;
+
 }
 
-.skill-window-bar{
-height:48px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 18px 0 72px;
-position:relative;
-background:#111;
-border-bottom:1px solid rgba(255,255,255,.08);
+.skill-cover-overlay h4{
+
+    color:#fff;
+    font-size:2rem;
+    margin-bottom:12px;
+
 }
 
-.skill-window-bar::before{
-content:"";
-position:absolute;
-left:18px;
-top:50%;
-transform:translateY(-50%);
-width:12px;
-height:12px;
-border-radius:50%;
-background:#ff5f57;
-box-shadow:
-20px 0 #febc2e,
-40px 0 #28c840;
+.skill-cover-overlay p{
+
+    color:rgba(255,255,255,.8);
+    line-height:1.7;
+    margin-bottom:24px;
+
 }
 
-.skill-window-title{
-font-size:.72rem;
-letter-spacing:1px;
-text-transform:uppercase;
-color:#d5d5d5;
+.skill-open-btn{
+
+    width:max-content;
+    border:none;
+    cursor:pointer;
+    background:var(--red);
+    color:#fff;
+    padding:14px 24px;
+    border-radius:50px;
+    font-weight:700;
+    transition:.3s;
+
 }
 
-.skill-window-badge{
-background:rgba(255,255,255,.08);
-padding:6px 12px;
-border-radius:30px;
-font-size:.65rem;
-color:#ffeeb4;
-letter-spacing:.8px;
+.skill-open-btn:hover{
+
+    background:var(--rose);
+    transform:translateX(5px);
+
 }
 
+/* ======================================
+   REMOVE OLD WINDOW
+====================================== */
+
+.skill-window,
+.skill-window-bar,
 .skill-window-content{
-padding:18px;
+
+    padding:0;
+    background:none;
+    border:none;
+    box-shadow:none;
+
 }
 
-.skill-window-video-row{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:14px;
-}
+/* ======================================
+   RESPONSIVE
+====================================== */
 
-.skill-window-post-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-grid-auto-rows:120px;
-gap:12px;
-}
-
-.skill-media-post-large{
-grid-column:span 2;
-grid-row:span 2;
-}
-
-.skill-media-post-wide{
-grid-column:span 2;
-}
-
-.skill-media-tile{
-position:relative;
-overflow:hidden;
-border-radius:14px;
-cursor:pointer;
-background:#000;
-}
-
-.skill-media-video{
-aspect-ratio:9/16;
-}
-
-.skill-media-video img,
-.skill-media-post img{
-width:100%;
-height:100%;
-object-fit:cover;
-display:block;
-transition:.45s;
-}
-
-.skill-media-tile:hover img{
-transform:scale(1.08);
-}
-
-.skill-media-label{
-position:absolute;
-left:10px;
-bottom:10px;
-padding:5px 10px;
-border-radius:20px;
-background:rgba(0,0,0,.55);
-backdrop-filter:blur(10px);
-font-size:.7rem;
-font-weight:600;
-color:#fff;
-}
-
-.skill-media-video::after{
-content:"▶";
-position:absolute;
-left:50%;
-top:50%;
-transform:translate(-50%,-50%) scale(.7);
-width:64px;
-height:64px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:50%;
-background:rgba(0,0,0,.65);
-color:#fff;
-font-size:28px;
-opacity:0;
-transition:.35s;
-}
-
-.skill-media-video:hover::after{
-opacity:1;
-transform:translate(-50%,-50%) scale(1);
-}
-
-@media(max-width:1100px){
+@media(max-width:992px){
 
 .skills-grid{
+
 grid-template-columns:1fr;
+
+}
+
+.skill-cover{
+
+height:360px;
+
 }
 
 }
@@ -856,15 +965,27 @@ grid-template-columns:1fr;
 @media(max-width:768px){
 
 #skills{
+
 padding:80px 24px;
+
 }
 
-.skill-window-video-row{
-grid-template-columns:repeat(2,1fr);
+.skill-cover{
+
+height:300px;
+
 }
 
-.skill-window-post-grid{
-grid-template-columns:repeat(2,1fr);
+.showcase-info{
+
+padding:22px;
+
+}
+
+.showcase-info h3{
+
+font-size:1.4rem;
+
 }
 
 }
