@@ -625,27 +625,30 @@ if (phoneVideo && videoCards.length > 0) {
 }
 
 /* ==========================================================
-   SKILLS SHOWCASE
+   SKILLS SHOWCASE — small peek-carousel window
+   Opens above the two cards. Shows one item centered, with a
+   sliver of the prev/next item peeking on either side.
+   Images: prev/next/close/dots only.
+   Videos (BTS): also gets play/pause, mute, progress bar.
 ========================================================== */
 
 const showcase = document.getElementById("skillsShowcase");
 
 if (showcase) {
 
-    const showcaseImg = document.getElementById("showcaseImage");
-    const showcaseVideo = document.getElementById("showcaseVideo");
-
-    const showcaseTitle = document.getElementById("showcaseTitle");
+    const cards            = document.querySelectorAll(".skill-card-showcase[data-showcase]");
+    const track            = document.getElementById("showcaseTrack");
+    const showcaseTitle    = document.getElementById("showcaseTitle");
     const showcaseCategory = document.getElementById("showcaseCategory");
-    const showcaseDescription = document.getElementById("showcaseDescription");
+    const showcaseDots     = document.getElementById("showcaseDots");
+    const showcasePrevBtn  = document.getElementById("showcasePrev");
+    const showcaseNextBtn  = document.getElementById("showcaseNext");
+    const showcaseCloseBtn = document.getElementById("showcaseClose");
 
-    const showcaseCurrent = document.getElementById("showcaseCurrent");
-    const showcaseTotal = document.getElementById("showcaseTotal");
-
-    const showcasePrev = document.getElementById("showcasePrev");
-    const showcaseNext = document.getElementById("showcaseNext");
-
-    const buttons = document.querySelectorAll(".skill-open-btn");
+    const videoControls  = document.getElementById("showcaseVideoControls");
+    const playPauseBtn   = document.getElementById("showcasePlayPause");
+    const muteBtn        = document.getElementById("showcaseMute");
+    const progressFill   = document.getElementById("showcaseProgressFill");
 
     let activeItems = [];
     let activeIndex = 0;
@@ -653,182 +656,178 @@ if (showcase) {
     const showcaseData = {
 
         bts: [
-
-            {
-                type: "video",
-                src: "images/BTS 1.mp4",
-                title: "Behind The Scenes 01",
-                category: "BTS Videography",
-                description: "Creative product shoot."
-            },
-
-            {
-                type: "video",
-                src: "images/BTS 2.mp4",
-                title: "Behind The Scenes 02",
-                category: "BTS Videography",
-                description: "Production workflow."
-            },
-
-            {
-                type: "video",
-                src: "images/BTS 3.mp4",
-                title: "Behind The Scenes 03",
-                category: "BTS Videography",
-                description: "Brand storytelling."
-            }
-
+            { type: "video", src: "images/BTS 1.mp4", title: "Behind The Scenes 01", category: "BTS Videography" },
+            { type: "video", src: "images/BTS 2.mp4", title: "Behind The Scenes 02", category: "BTS Videography" },
+            { type: "video", src: "images/BTS 3.mp4", title: "Behind The Scenes 03", category: "BTS Videography" }
         ],
 
         smm: [
-
-            {
-                type:"image",
-                src:"images/SMM 1.jpeg",
-                title:"Campaign 01",
-                category:"Social Media",
-                description:"Creative Campaign"
-            },
-
-            {
-                type:"image",
-                src:"images/SMM 2.jpeg",
-                title:"Campaign 02",
-                category:"Social Media",
-                description:"Creative Campaign"
-            },
-
-            {
-                type:"image",
-                src:"images/SMM 3.jpeg",
-                title:"Campaign 03",
-                category:"Social Media",
-                description:"Creative Campaign"
-            },
-
-            {
-                type:"image",
-                src:"images/SMM 4.jpeg",
-                title:"Campaign 04",
-                category:"Social Media",
-                description:"Creative Campaign"
-            },
-
-            {
-                type:"image",
-                src:"images/SMM 5.jpeg",
-                title:"Campaign 05",
-                category:"Social Media",
-                description:"Creative Campaign"
-            },
-
-            {
-                type:"image",
-                src:"images/SMM 6.jpeg",
-                title:"Campaign 06",
-                category:"Social Media",
-                description:"Creative Campaign"
-            },
-
-            {
-                type:"image",
-                src:"images/SMM 7.jpeg",
-                title:"Campaign 07",
-                category:"Social Media",
-                description:"Creative Campaign"
-            }
-
+            { type: "image", src: "images/SMM 1.jpeg", title: "Campaign 01", category: "Social Media Marketing" },
+            { type: "image", src: "images/SMM 2.jpeg", title: "Campaign 02", category: "Social Media Marketing" },
+            { type: "image", src: "images/SMM 3.jpeg", title: "Campaign 03", category: "Social Media Marketing" },
+            { type: "image", src: "images/SMM 4.jpeg", title: "Campaign 04", category: "Social Media Marketing" },
+            { type: "image", src: "images/SMM 5.jpeg", title: "Campaign 05", category: "Social Media Marketing" },
+            { type: "image", src: "images/SMM 6.jpeg", title: "Campaign 06", category: "Social Media Marketing" },
+            { type: "image", src: "images/SMM 7.jpeg", title: "Campaign 07", category: "Social Media Marketing" }
         ]
 
     };
 
-    function renderShowcase() {
-
-        const item = activeItems[activeIndex];
-
-        showcase.classList.add("active");
-        showcase.hidden = false;
-
-        showcaseCurrent.textContent = activeIndex + 1;
-        showcaseTotal.textContent = activeItems.length;
-
-        showcaseTitle.textContent = item.title;
-        showcaseCategory.textContent = item.category;
-        showcaseDescription.textContent = item.description;
+    function buildSlide(item, position) {
+        // position: "prev" | "current" | "next"
+        const wrap = document.createElement("div");
+        wrap.className = "showcase-slide showcase-slide-" + position;
 
         if (item.type === "video") {
-
-            showcaseImg.hidden = true;
-
-            showcaseVideo.hidden = false;
-
-            showcaseVideo.pause();
-            showcaseVideo.src = item.src;
-            showcaseVideo.load();
-            showcaseVideo.play().catch(() => {});
-
+            const v = document.createElement("video");
+            v.src = item.src;
+            v.className = "showcase-media";
+            v.playsInline = true;
+            v.preload = "metadata";
+            v.muted = position !== "current";
+            v.loop = false;
+            wrap.appendChild(v);
         } else {
-
-            showcaseVideo.pause();
-            showcaseVideo.removeAttribute("src");
-            showcaseVideo.load();
-
-            showcaseVideo.hidden = true;
-
-            showcaseImg.hidden = false;
-            showcaseImg.src = item.src;
-
+            const img = document.createElement("img");
+            img.src = item.src;
+            img.alt = item.title;
+            img.className = "showcase-media";
+            wrap.appendChild(img);
         }
 
-        showcase.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
+        if (position !== "current") {
+            wrap.addEventListener("click", () => {
+                position === "prev" ? showPrev() : showNext();
+            });
+        }
+
+        return wrap;
+    }
+
+    function renderDots() {
+        showcaseDots.innerHTML = "";
+        activeItems.forEach((_, i) => {
+            const dot = document.createElement("span");
+            dot.className = "showcase-dot" + (i === activeIndex ? " active" : "");
+            showcaseDots.appendChild(dot);
         });
+    }
+
+    function stopAllVideos() {
+        track.querySelectorAll("video").forEach(v => v.pause());
+    }
+
+    function updateProgress() {
+        const v = track.querySelector(".showcase-slide-current video");
+        if (!v || !v.duration) return;
+        progressFill.style.width = (v.currentTime / v.duration) * 100 + "%";
+    }
+
+    function renderShowcase() {
+
+        const total   = activeItems.length;
+        const item    = activeItems[activeIndex];
+        const prevIdx = (activeIndex - 1 + total) % total;
+        const nextIdx = (activeIndex + 1) % total;
+
+        showcase.hidden = false;
+        showcase.classList.add("active");
+
+        track.innerHTML = "";
+        if (total > 1) track.appendChild(buildSlide(activeItems[prevIdx], "prev"));
+        track.appendChild(buildSlide(item, "current"));
+        if (total > 1) track.appendChild(buildSlide(activeItems[nextIdx], "next"));
+
+        // hide side peeks + arrows when there's only one item
+        showcasePrevBtn.style.display = total > 1 ? "" : "none";
+        showcaseNextBtn.style.display = total > 1 ? "" : "none";
+
+        showcaseCategory.textContent = item.category;
+        showcaseTitle.textContent = item.title;
+        renderDots();
+
+        const currentVideo = track.querySelector(".showcase-slide-current video");
+
+        if (currentVideo) {
+            videoControls.hidden = false;
+            currentVideo.muted = false;
+            currentVideo.currentTime = 0;
+            progressFill.style.width = "0%";
+            currentVideo.play().catch(() => {});
+            playPauseBtn.innerHTML = "&#10074;&#10074;"; // pause icon
+            muteBtn.innerHTML = "&#128266;"; // speaker icon
+
+            currentVideo.addEventListener("timeupdate", updateProgress);
+            currentVideo.addEventListener("ended", () => {
+                playPauseBtn.innerHTML = "&#9654;"; // play icon
+            });
+        } else {
+            videoControls.hidden = true;
+        }
 
     }
 
-    buttons.forEach(button => {
+    function showNext() {
+        stopAllVideos();
+        activeIndex = (activeIndex + 1) % activeItems.length;
+        renderShowcase();
+    }
 
-        button.addEventListener("click", () => {
+    function showPrev() {
+        stopAllVideos();
+        activeIndex = (activeIndex - 1 + activeItems.length) % activeItems.length;
+        renderShowcase();
+    }
 
-            const group = button.dataset.showcase;
+    function openShowcase(group) {
+        activeItems = showcaseData[group];
+        activeIndex = 0;
+        renderShowcase();
 
-            activeItems = showcaseData[group];
+        showcase.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
 
-            activeIndex = 0;
+    function closeShowcase() {
+        stopAllVideos();
+        showcase.classList.remove("active");
+        showcase.hidden = true;
+        track.innerHTML = "";
+    }
 
-            renderShowcase();
+    cards.forEach(card => {
 
+        card.addEventListener("click", () => openShowcase(card.dataset.showcase));
+
+        card.addEventListener("keydown", e => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openShowcase(card.dataset.showcase);
+            }
         });
 
     });
 
-    showcaseNext.addEventListener("click", () => {
+    showcaseNextBtn.addEventListener("click", showNext);
+    showcasePrevBtn.addEventListener("click", showPrev);
+    showcaseCloseBtn.addEventListener("click", closeShowcase);
 
-        activeIndex++;
-
-        if (activeIndex >= activeItems.length) {
-
-            activeIndex = 0;
-
+    playPauseBtn.addEventListener("click", () => {
+        const v = track.querySelector(".showcase-slide-current video");
+        if (!v) return;
+        if (v.paused) {
+            v.play();
+            playPauseBtn.innerHTML = "&#10074;&#10074;";
+        } else {
+            v.pause();
+            playPauseBtn.innerHTML = "&#9654;";
         }
-
-        renderShowcase();
-
     });
 
-    showcasePrev.addEventListener("click", () => {
-
-        activeIndex--;
-
-        if (activeIndex < 0) {
-
-            activeIndex = activeItems.length - 1;
-
-        }
-
-        renderShowcase();
-
+    muteBtn.addEventListener("click", () => {
+        const v = track.querySelector(".showcase-slide-current video");
+        if (!v) return;
+        v.muted = !v.muted;
+        muteBtn.innerHTML = v.muted ? "&#128263;" : "&#128266;";
     });
 
 }

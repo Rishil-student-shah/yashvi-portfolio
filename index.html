@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
   <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -254,168 +254,73 @@
 
     </div>
 
-    <!-- Shared Showcase -->
+    <!-- Shared Showcase (opens as a small window above the cards) -->
 
     <div
         class="skills-showcase"
         id="skillsShowcase"
         hidden>
 
-        <button
-            class="showcase-nav showcase-prev"
-            id="showcasePrev">
+        <button class="showcase-close" id="showcaseClose" aria-label="Close showcase">&times;</button>
 
-            &#10094;
+        <div class="showcase-window" id="showcaseWindow">
 
-        </button>
+            <div class="showcase-track" id="showcaseTrack"></div>
 
-        <div class="showcase-body">
+            <button class="showcase-arrow showcase-arrow-left" id="showcasePrev" aria-label="Previous">&#10094;</button>
+            <button class="showcase-arrow showcase-arrow-right" id="showcaseNext" aria-label="Next">&#10095;</button>
 
-            <img
-                id="showcaseImage"
-                src=""
-                alt=""
-                hidden>
-
-            <video
-                id="showcaseVideo"
-                controls
-                playsinline
-                hidden>
-            </video>
+            <!-- Video-only control bar (play/pause, progress, mute) -->
+            <div class="showcase-video-controls" id="showcaseVideoControls" hidden>
+                <button id="showcasePlayPause" class="showcase-vc-btn" aria-label="Play or pause">&#10074;&#10074;</button>
+                <div class="showcase-progress"><div class="showcase-progress-fill" id="showcaseProgressFill"></div></div>
+                <button id="showcaseMute" class="showcase-vc-btn" aria-label="Mute or unmute">&#128266;</button>
+            </div>
 
         </div>
 
-        <button
-            class="showcase-nav showcase-next"
-            id="showcaseNext">
-
-            &#10095;
-
-        </button>
-
         <div class="showcase-info">
-
-            <span id="showcaseCategory">
-                BTS Videography
-            </span>
-
-            <h3 id="showcaseTitle">
-                Showcase
-            </h3>
-
-            <p id="showcaseDescription">
-                Description
-            </p>
-
-            <div class="showcase-count">
-
-                <span id="showcaseCurrent">
-                    1
-                </span>
-
-                /
-
-                <span id="showcaseTotal">
-                    3
-                </span>
-
-            </div>
-
+            <span id="showcaseCategory">BTS Videography</span>
+            <h3 id="showcaseTitle">Showcase</h3>
+            <div class="showcase-dots" id="showcaseDots"></div>
         </div>
 
     </div>
 
     <div class="skills-grid" role="list">
 
-      <article class="skill-card skill-card-showcase fade-up delay-1" role="listitem">
-        <div class="skill-card-header">
-          <span class="skill-icon" aria-hidden="true">🎬</span>
-          <div>
-            <h3 class="skill-name">BTS Videography</h3>
-            <p class="skill-desc">Behind-the-scenes clips that feel like a small cinema window, not a phone mockup.</p>
-          </div>
-        </div>
+      <article
+          class="skill-card skill-card-showcase fade-up delay-1"
+          role="listitem"
+          tabindex="0"
+          data-showcase="bts">
 
-        <div class="skill-window">
+          <span class="skill-card-icon" aria-hidden="true">🎬</span>
+          <span class="skill-card-tag">3 Creative Videos</span>
+          <h3 class="skill-card-title">BTS Videography</h3>
+          <p class="skill-card-text">
+              Product shoots, behind-the-scenes moments and
+              cinematic storytelling that bring every brand to life.
+          </p>
+          <span class="skill-card-cta">View Showcase &#8594;</span>
 
-    <div class="skill-cover">
-
-        <img
-            src="images/bts-cover.jpg"
-            alt="Behind The Scenes">
-
-        <div class="skill-cover-overlay">
-
-            <span class="skill-cover-tag">
-                3 Creative Videos
-            </span>
-
-            <h4>BTS Videography</h4>
-
-            <p>
-                Product shoots, behind-the-scenes moments and
-                cinematic storytelling that bring every brand to life.
-            </p>
-
-            <button
-                class="skill-open-btn"
-                data-showcase="bts">
-
-                Explore Showcase →
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
       </article>
 
-      <article class="skill-card skill-card-showcase fade-up delay-2" role="listitem">
-        <div class="skill-card-header">
-          <span class="skill-icon" aria-hidden="true">📊</span>
-          <div>
-            <h3 class="skill-name">Social Media Marketing</h3>
-            <p class="skill-desc">Seven post designs arranged like a campaign board inside a clean desktop window.</p>
-          </div>
-        </div>
+      <article
+          class="skill-card skill-card-showcase fade-up delay-2"
+          role="listitem"
+          tabindex="0"
+          data-showcase="smm">
 
-        <div class="skill-window">
+          <span class="skill-card-icon" aria-hidden="true">📊</span>
+          <span class="skill-card-tag">7 Campaign Creatives</span>
+          <h3 class="skill-card-title">Social Media Marketing</h3>
+          <p class="skill-card-text">
+              Creative campaigns, branding visuals and social media
+              designs crafted to capture attention and engagement.
+          </p>
+          <span class="skill-card-cta">View Showcase &#8594;</span>
 
-    <div class="skill-cover">
-
-        <img
-            src="images/smm-cover.jpg"
-            alt="Social Media Marketing">
-
-        <div class="skill-cover-overlay">
-
-            <span class="skill-cover-tag">
-                7 Campaign Creatives
-            </span>
-
-            <h4>Social Media Marketing</h4>
-
-            <p>
-                Creative campaigns, branding visuals and social media
-                designs crafted to capture attention and engagement.
-            </p>
-
-            <button
-                class="skill-open-btn"
-                data-showcase="smm">
-
-                Explore Showcase →
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
       </article>
 
     </div>
