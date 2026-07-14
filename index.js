@@ -226,6 +226,7 @@ const phoneLikes = document.getElementById('phoneLikes');
 const phoneViews = document.getElementById('phoneViews');
 const phoneMuteIndicator = document.getElementById('phoneMuteIndicator');
 const phonePlayPauseBtn = document.getElementById('phonePlayPauseBtn');
+const phoneNextBtn = document.getElementById('phoneNextBtn');
 const phoneMuteBtn = document.getElementById('phoneMuteBtn');
 const phonePlaybackState = document.getElementById('phonePlaybackState');
 const audioDisc = document.querySelector('.phone-audio-disc');
@@ -258,6 +259,10 @@ if (phoneVideo && videoCards.length > 0) {
       phonePlayPauseBtn.classList.toggle('is-active', isPlaying);
     }
 
+    if (phoneNextBtn) {
+      phoneNextBtn.classList.toggle('is-active', false);
+    }
+
     if (phoneMuteBtn) {
       phoneMuteBtn.textContent = isMuted ? 'Sound Off' : 'Sound On';
       phoneMuteBtn.setAttribute('aria-label', isMuted ? 'Unmute reel audio' : 'Mute reel audio');
@@ -269,10 +274,7 @@ if (phoneVideo && videoCards.length > 0) {
     }
   };
 
-  const playReel = async ({ forceSound = true, showSoundFailure = true } = {}) => {
-    if (forceSound) {
-      phoneVideo.muted = false;
-    }
+  const playReel = async () => {
 
     try {
       await phoneVideo.play();
@@ -280,19 +282,6 @@ if (phoneVideo && videoCards.length > 0) {
       setIndicator(phoneVideo.muted ? '🔇' : '🔊');
       return true;
     } catch (_error) {
-      if (forceSound && showSoundFailure) {
-        phoneVideo.muted = true;
-        try {
-          await phoneVideo.play();
-          syncControls();
-          setIndicator('🔇');
-          return false;
-        } catch (_fallbackError) {
-          syncControls();
-          return false;
-        }
-      }
-
       syncControls();
       return false;
     }
@@ -320,18 +309,27 @@ if (phoneVideo && videoCards.length > 0) {
       phoneVideo.pause();
       phoneVideo.src = videoSrc;
       phoneVideo.load();
-      phoneVideo.muted = false;
+      phoneVideo.addEventListener('loadedmetadata', () => {
+        phoneVideo.currentTime = 0;
+        phoneVideo.pause();
+        syncControls();
+      }, { once: true });
 
       if (phoneLikes) phoneLikes.textContent = likes || '0';
       if (phoneViews) phoneViews.textContent = views || '0';
       if (phoneVideoDesc) phoneVideoDesc.textContent = desc || '';
-
-      playReel({ forceSound: true });
     }
   };
 
-  // Start muted so browsers can autoplay the initial reel preview.
-  phoneVideo.muted = true;
+  const getNextCard = () => {
+    if (!currentVideoCard) return videoCards[0] || null;
+    const currentIndex = Array.from(videoCards).indexOf(currentVideoCard);
+    if (currentIndex < 0) return videoCards[0] || null;
+    return videoCards[(currentIndex + 1) % videoCards.length] || null;
+  };
+
+  // Start in paused mode so the first reel shows a paused frame.
+  phoneVideo.muted = false;
 
   phoneVideo.addEventListener('loadeddata', syncControls);
 
@@ -349,16 +347,26 @@ if (phoneVideo && videoCards.length > 0) {
   phoneVideo.addEventListener('volumechange', syncControls);
 
   syncControls();
-  playReel({ forceSound: false, showSoundFailure: false });
+  phoneVideo.pause();
 
   if (phonePlayPauseBtn) {
     phonePlayPauseBtn.addEventListener('click', (e) => {
       e.stopPropagation();
 
       if (phoneVideo.paused) {
-        playReel({ forceSound: false });
+        playReel();
       } else {
         pauseReel();
+      }
+    });
+  }
+
+  if (phoneNextBtn) {
+    phoneNextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const nextCard = getNextCard();
+      if (nextCard) {
+        loadReelFromCard(nextCard);
       }
     });
   }
@@ -379,12 +387,8 @@ if (phoneVideo && videoCards.length > 0) {
   // Click on the phone screen toggles play/pause only. Audio is controlled separately.
   if (phoneScreen) {
     phoneScreen.addEventListener('click', (e) => {
-      // Ignore clicks on controls or actions that should not toggle playback.
-      if (
-        e.target.closest('.phone-controls') ||
-        e.target.closest('.phone-reels-right') ||
-        e.target.closest('.phone-follow-btn')
-      ) {
+      // Ignore clicks on interactive elements that should not toggle playback.
+      if (e.target.closest('.phone-reels-right') || e.target.closest('.phone-follow-btn')) {
         return;
       }
 
@@ -433,9 +437,9 @@ if (phoneVideo && videoCards.length > 0) {
       e.stopPropagation(); // Prevent click from bubbling up to phoneScreen
       
       navigator.clipboard.writeText(window.location.href).then(() => {
-        flashIndicator('🔗 Link Copied!');
+        setIndicator('🔗 Link Copied!');
       }).catch(() => {
-        flashIndicator('📋 Copied!');
+        setIndicator('📋 Copied!');
       });
       
       phoneShareBtn.style.transform = 'scale(1.2)';

@@ -123,22 +123,10 @@
         <div class="phone-screen">
           <div class="phone-notch"></div>
           
-          <!-- Clicking phone screen plays/pauses & mutes/unmutes -->
-          <video id="phoneVideo" class="phone-video-player" src="images/reel 1.mp4" autoplay muted loop playsinline></video>
+          <video id="phoneVideo" class="phone-video-player" src="images/reel 1.mp4" preload="metadata" muted loop playsinline></video>
           
           <!-- Tap to Mute indicator overlay (briefly flashes on screen) -->
           <div id="phoneMuteIndicator" class="phone-mute-indicator" style="display:none;">🔊</div>
-
-          <!-- Explicit reel controls for predictable playback and audio -->
-          <div class="phone-controls" aria-label="Reel playback controls">
-            <button type="button" class="phone-control-btn" id="phonePlayPauseBtn" aria-label="Pause reel">
-              Pause
-            </button>
-            <button type="button" class="phone-control-btn" id="phoneMuteBtn" aria-label="Mute reel audio">
-              Sound On
-            </button>
-            <span id="phonePlaybackState" class="phone-playback-state" aria-live="polite">Playing</span>
-          </div>
 
           <!-- Instagram UI Overlay -->
           <div class="phone-reels-overlay">
@@ -200,6 +188,20 @@
           </div>
         </div>
       </div>
+
+      <div class="phone-controls" aria-label="Reel playback controls">
+        <button type="button" class="phone-control-btn" id="phonePlayPauseBtn" aria-label="Play reel">
+          Play
+        </button>
+        <button type="button" class="phone-control-btn" id="phoneNextBtn" aria-label="Next reel">
+          Next
+        </button>
+        <button type="button" class="phone-control-btn" id="phoneMuteBtn" aria-label="Mute reel audio">
+          Sound On
+        </button>
+        <span id="phonePlaybackState" class="phone-playback-state" aria-live="polite">Paused</span>
+      </div>
+
       <span class="phone-instruction">✦ Click any video card on the right to preview inside the phone</span>
       <span class="phone-instruction phone-instruction-sub" style="font-size:0.55rem; margin-top:-8px; opacity:0.6; color: var(--gold);">✦ Tap the screen to mute / unmute video</span>
     </div>
