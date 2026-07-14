@@ -273,7 +273,7 @@ if (phoneVideo && videoCards.length > 0) {
     }
   };
 
-  // Click on the phone screen to toggle Play/Pause/Mute
+  // Click on the phone screen to toggle Play/Pause
   if (phoneScreen) {
     phoneScreen.addEventListener('click', (e) => {
       // Ignore clicks on buttons/interactive elements on the right or bottom
@@ -282,21 +282,13 @@ if (phoneVideo && videoCards.length > 0) {
       }
 
       if (phoneVideo.paused) {
-        // If it's paused, play it and ensure it's unmuted
         phoneVideo.muted = false;
         phoneVideo.play().then(() => {
           flashIndicator('▶');
         }).catch(() => {});
       } else {
-        // If it's playing but currently muted (e.g. just loaded), unmute it first!
-        if (phoneVideo.muted) {
-          phoneVideo.muted = false;
-          flashIndicator('🔊');
-        } else {
-          // If it's playing and already unmuted, pause it!
-          phoneVideo.pause();
-          flashIndicator('⏸');
-        }
+        phoneVideo.pause();
+        flashIndicator('⏸');
       }
     });
   }
