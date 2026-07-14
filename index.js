@@ -301,6 +301,53 @@ if (phoneVideo && videoCards.length > 0) {
     });
   }
 
+  // Interactivity for phone mockup action buttons (Like & Share)
+  const phoneLikeBtn = document.querySelector('.phone-reels-right [aria-label="Like post"]');
+  const phoneShareBtn = document.querySelector('.phone-reels-right [aria-label="Share"]');
+
+  if (phoneLikeBtn) {
+    phoneLikeBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent click from bubbling up to phoneScreen
+      const heartSvg = phoneLikeBtn.querySelector('svg');
+      const likesText = document.getElementById('phoneLikes');
+      if (!likesText) return;
+
+      const isCurrentlyLiked = phoneLikeBtn.classList.toggle('liked');
+      if (isCurrentlyLiked) {
+        heartSvg.setAttribute('fill', '#ff3040');
+        phoneLikeBtn.style.transform = 'scale(1.25)';
+        setTimeout(() => { phoneLikeBtn.style.transform = ''; }, 150);
+        
+        if (likesText.textContent === '19.5K') likesText.textContent = '19.6K';
+        else if (likesText.textContent === '8.4K') likesText.textContent = '8.5K';
+        else if (likesText.textContent === '12.1K') likesText.textContent = '12.2K';
+      } else {
+        heartSvg.setAttribute('fill', '#ffffff');
+        phoneLikeBtn.style.transform = 'scale(0.85)';
+        setTimeout(() => { phoneLikeBtn.style.transform = ''; }, 150);
+
+        if (likesText.textContent === '19.6K') likesText.textContent = '19.5K';
+        else if (likesText.textContent === '8.5K') likesText.textContent = '8.4K';
+        else if (likesText.textContent === '12.2K') likesText.textContent = '12.1K';
+      }
+    });
+  }
+
+  if (phoneShareBtn) {
+    phoneShareBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent click from bubbling up to phoneScreen
+      
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        flashIndicator('🔗 Link Copied!');
+      }).catch(() => {
+        flashIndicator('📋 Copied!');
+      });
+      
+      phoneShareBtn.style.transform = 'scale(1.2)';
+      setTimeout(() => { phoneShareBtn.style.transform = ''; }, 150);
+    });
+  }
+
   videoCards.forEach(card => {
     const previewVideo = card.querySelector('video');
 
