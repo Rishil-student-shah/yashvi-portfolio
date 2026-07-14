@@ -750,6 +750,7 @@ if (showcase) {
 
         if (currentVideo) {
             videoControls.hidden = false;
+            document.getElementById("showcaseWindow").classList.add("has-video-controls");
             currentVideo.muted = false;
             currentVideo.currentTime = 0;
             progressFill.style.width = "0%";
@@ -763,6 +764,7 @@ if (showcase) {
             });
         } else {
             videoControls.hidden = true;
+            document.getElementById("showcaseWindow").classList.remove("has-video-controls");
         }
 
     }
