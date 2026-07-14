@@ -365,13 +365,8 @@ if (phoneVideo && videoCards.length > 0) {
           flashIndicator('▶');
         }).catch(() => {});
       } else {
-        if (phoneVideo.muted) {
-          phoneVideo.muted = false;
-          flashIndicator('🔊');
-        } else {
-          phoneVideo.pause();
-          flashIndicator('⏸');
-        }
+        phoneVideo.pause();
+        flashIndicator('⏸');
       }
     });
   }
