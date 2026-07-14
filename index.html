@@ -129,6 +129,17 @@
           <!-- Tap to Mute indicator overlay (briefly flashes on screen) -->
           <div id="phoneMuteIndicator" class="phone-mute-indicator" style="display:none;">🔊</div>
 
+          <!-- Explicit reel controls for predictable playback and audio -->
+          <div class="phone-controls" aria-label="Reel playback controls">
+            <button type="button" class="phone-control-btn" id="phonePlayPauseBtn" aria-label="Pause reel">
+              Pause
+            </button>
+            <button type="button" class="phone-control-btn" id="phoneMuteBtn" aria-label="Mute reel audio">
+              Sound On
+            </button>
+            <span id="phonePlaybackState" class="phone-playback-state" aria-live="polite">Playing</span>
+          </div>
+
           <!-- Instagram UI Overlay -->
           <div class="phone-reels-overlay">
             <div class="phone-reels-top">
