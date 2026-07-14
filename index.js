@@ -235,167 +235,125 @@ if (lightbox && igPosts.length > 0) {
   });
 }
 
-/* ─────────── Interactive Phone Mockup Video Player ─────────── */
-const phoneVideo = document.getElementById('phoneVideo');
-const phoneVideoDesc = document.getElementById('phoneVideoDesc');
-const phoneLikes = document.getElementById('phoneLikes');
-const phoneViews = document.getElementById('phoneViews');
-const phoneMuteIndicator = document.getElementById('phoneMuteIndicator');
-const audioDisc = document.querySelector('.phone-audio-disc');
-const videoCards = document.querySelectorAll('.work-card.video-card');
+/* ─────────── Phone Mockup Video Player ─────────── */
+(function () {
+  var vid      = document.getElementById('phoneVideo');
+  var cards    = Array.from(document.querySelectorAll('.work-card.video-card'));
+  var prevBtn  = document.getElementById('prevBtn');
+  var nextBtn  = document.getElementById('nextBtn');
+  var ppBtn    = document.getElementById('playPauseBtn');
+  var playIco  = ppBtn && ppBtn.querySelector('.play-icon');
+  var pauseIco = ppBtn && ppBtn.querySelector('.pause-icon');
+  var descEl   = document.getElementById('phoneVideoDesc');
+  var likesEl  = document.getElementById('phoneLikes');
+  var viewsEl  = document.getElementById('phoneViews');
+  var disc     = document.querySelector('.phone-audio-disc');
+  var flash    = document.getElementById('phoneMuteIndicator');
 
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const playPauseBtn = document.getElementById('playPauseBtn');
-const playIcon = playPauseBtn ? playPauseBtn.querySelector('.play-icon') : null;
-const pauseIcon = playPauseBtn ? playPauseBtn.querySelector('.pause-icon') : null;
+  if (!vid || cards.length === 0) return;
 
-if (phoneVideo && videoCards.length > 0) {
-  // Initialize video as muted so autoplay is allowed by the browser
-  phoneVideo.muted = true;
+  var current = 0; // index of the active card
 
-  // Sync rotating audio disc animation & play/pause buttons with video play state
-  phoneVideo.addEventListener('play', () => {
-    if (audioDisc) audioDisc.classList.add('playing');
-    if (playIcon) playIcon.style.display = 'none';
-    if (pauseIcon) pauseIcon.style.display = 'block';
-  });
-  
-  phoneVideo.addEventListener('pause', () => {
-    if (audioDisc) audioDisc.classList.remove('playing');
-    if (playIcon) playIcon.style.display = 'block';
-    if (pauseIcon) pauseIcon.style.display = 'none';
-  });
+  /* ── helpers ─────────────────────────────────── */
+  function showPlayIcon() {
+    if (playIco)  playIco.style.display  = 'block';
+    if (pauseIco) pauseIco.style.display = 'none';
+  }
+  function showPauseIcon() {
+    if (playIco)  playIco.style.display  = 'none';
+    if (pauseIco) pauseIco.style.display = 'block';
+  }
+  function flashIcon(icon) {
+    if (!flash) return;
+    flash.textContent = icon;
+    flash.style.display = 'flex';
+    setTimeout(function () { flash.style.display = 'none'; }, 700);
+  }
+  function setActiveCard(idx) {
+    cards.forEach(function (c) { c.classList.remove('active'); });
+    cards[idx].classList.add('active');
+    current = idx;
+    var src   = cards[idx].getAttribute('data-video')  || '';
+    var likes = cards[idx].getAttribute('data-likes')  || '';
+    var views = cards[idx].getAttribute('data-views')  || '';
+    var desc  = cards[idx].getAttribute('data-desc')   || '';
+    if (descEl)  descEl.textContent  = desc;
+    if (likesEl) likesEl.textContent = likes;
+    if (viewsEl) viewsEl.textContent = views;
+    return src;
+  }
 
-  // Helper to flash play or pause indicators on the screen
-  const flashIndicator = (icon) => {
-    if (phoneMuteIndicator) {
-      phoneMuteIndicator.textContent = icon;
-      phoneMuteIndicator.style.display = 'none';
-      void phoneMuteIndicator.offsetWidth; // trigger reflow
-      phoneMuteIndicator.style.display = 'flex';
-      
-      // Hide after animation finishes
-      setTimeout(() => {
-        phoneMuteIndicator.style.display = 'none';
-      }, 700);
+  /* ── play with sound (needs a prior user gesture) ── */
+  function playWithSound(src) {
+    if (src && vid.getAttribute('src') !== src) {
+      vid.src = src;
+    } else {
+      vid.currentTime = 0;
     }
-  };
+    vid.muted  = false;
+    vid.volume = 1;
+    vid.play().then(function () {
+      showPauseIcon();
+      flashIcon('▶');
+      if (disc) disc.classList.add('playing');
+    }).catch(function (err) {
+      console.warn('play() failed:', err.message);
+    });
+  }
 
-  // Helper to get active card index
-  const getActiveCardIndex = () => {
-    let activeIndex = 0;
-    videoCards.forEach((card, idx) => {
-      if (card.classList.contains('active')) {
-        activeIndex = idx;
+  /* ── play/pause button ──────────────────────── */
+  if (ppBtn) {
+    ppBtn.addEventListener('click', function () {
+      if (vid.paused) {
+        playWithSound(cards[current].getAttribute('data-video'));
+      } else {
+        vid.pause();
+        showPlayIcon();
+        flashIcon('⏸');
+        if (disc) disc.classList.remove('playing');
       }
     });
-    return activeIndex;
-  };
+  }
 
-  // Helper to load video card by index
-  const loadVideoCard = (index) => {
-    if (index < 0 || index >= videoCards.length) return;
-    const card = videoCards[index];
-    
-    // Remove active class from all cards
-    videoCards.forEach(c => c.classList.remove('active'));
-    // Add active class to selected card
-    card.classList.add('active');
-
-    const videoSrc = card.getAttribute('data-video');
-    const likes = card.getAttribute('data-likes');
-    const views = card.getAttribute('data-views');
-    const desc = card.getAttribute('data-desc');
-
-    if (videoSrc) {
-      const currentSrcPath = phoneVideo.getAttribute('src');
-      if (currentSrcPath !== videoSrc) {
-        phoneVideo.src = videoSrc;
-        phoneVideo.load();
-      } else {
-        // If same source, just rewind to the beginning
-        phoneVideo.currentTime = 0;
-      }
-      
-      phoneVideo.muted = false;
-      
-      phoneVideo.play().then(() => {
-        flashIndicator('▶');
-      }).catch(() => {
-        // Fallback to muted autoplay if browser blocks
-        phoneVideo.muted = true;
-        phoneVideo.play().catch(() => {});
-      });
-
-      if (phoneLikes) phoneLikes.textContent = likes || '0';
-      if (phoneViews) phoneViews.textContent = views || '0';
-      if (phoneVideoDesc) phoneVideoDesc.textContent = desc || '';
-    }
-  };
-
-  // Button Event Listeners
+  /* ── prev / next buttons ────────────────────── */
   if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      let currentIndex = getActiveCardIndex();
-      let prevIndex = currentIndex - 1;
-      if (prevIndex < 0) {
-        prevIndex = videoCards.length - 1;
-      }
-      loadVideoCard(prevIndex);
+    prevBtn.addEventListener('click', function () {
+      var idx = (current - 1 + cards.length) % cards.length;
+      playWithSound(setActiveCard(idx));
     });
   }
-
   if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      let currentIndex = getActiveCardIndex();
-      let nextIndex = currentIndex + 1;
-      if (nextIndex >= videoCards.length) {
-        nextIndex = 0;
-      }
-      loadVideoCard(nextIndex);
+    nextBtn.addEventListener('click', function () {
+      var idx = (current + 1) % cards.length;
+      playWithSound(setActiveCard(idx));
     });
   }
 
-  if (playPauseBtn) {
-    playPauseBtn.addEventListener('click', () => {
-      if (phoneVideo.paused) {
-        phoneVideo.muted = false;
-        phoneVideo.play().then(() => {
-          flashIndicator('▶');
-        }).catch(() => {});
-      } else {
-        phoneVideo.pause();
-        flashIndicator('⏸');
-      }
+  /* ── card click ─────────────────────────────── */
+  cards.forEach(function (card, idx) {
+    var thumb = card.querySelector('video');
+    card.addEventListener('mouseenter', function () {
+      if (thumb) thumb.play().catch(function(){});
     });
-  }
-
-  // Hover animations & click events on standard cards
-  videoCards.forEach(card => {
-    const previewVideo = card.querySelector('video');
-
-    // 1. Silent Preview Hover Autoplay
-    card.addEventListener('mouseenter', () => {
-      if (previewVideo) {
-        previewVideo.play().catch(() => {});
-      }
+    card.addEventListener('mouseleave', function () {
+      if (thumb) { thumb.pause(); thumb.currentTime = 0; }
     });
-
-    card.addEventListener('mouseleave', () => {
-      if (previewVideo) {
-        previewVideo.pause();
-        previewVideo.currentTime = 0;
-      }
-    });
-
-    // 2. Click to load inside phone mockup
-    card.addEventListener('click', () => {
-      const idx = Array.from(videoCards).indexOf(card);
-      loadVideoCard(idx);
+    card.addEventListener('click', function () {
+      playWithSound(setActiveCard(idx));
     });
   });
-}
 
+  /* ── keep disc in sync if video ends / pauses ── */
+  vid.addEventListener('pause', function () {
+    if (disc) disc.classList.remove('playing');
+    showPlayIcon();
+  });
+  vid.addEventListener('play', function () {
+    if (disc) disc.classList.add('playing');
+    showPauseIcon();
+  });
 
+  /* ── initial state: show play icon ─────────── */
+  showPlayIcon();
 
+}());

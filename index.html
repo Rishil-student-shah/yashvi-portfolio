@@ -123,11 +123,11 @@
         <div class="phone-screen">
           <div class="phone-notch"></div>
           
-          <!-- Clicking phone screen plays/pauses & mutes/unmutes -->
-          <video id="phoneVideo" class="phone-video-player" src="images/reel 1.mp4" autoplay muted loop playsinline preload="auto"></video>
+          <!-- Video starts paused; Play button below gives the user gesture needed for sound -->
+          <video id="phoneVideo" class="phone-video-player" src="images/reel 1.mp4" loop playsinline preload="auto"></video>
           
-          <!-- Tap to Mute indicator overlay (briefly flashes on screen) -->
-          <div id="phoneMuteIndicator" class="phone-mute-indicator" style="display:none;">🔊</div>
+          <!-- Center overlay indicator (play / pause flash) -->
+          <div id="phoneMuteIndicator" class="phone-mute-indicator" style="display:none;">▶</div>
 
           <!-- Instagram UI Overlay -->
           <div class="phone-reels-overlay">
@@ -195,15 +195,16 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
         <button id="playPauseBtn" class="phone-control-btn" aria-label="Play/Pause">
-          <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          <!-- Show PLAY icon by default since video starts paused -->
+          <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </button>
         <button id="nextBtn" class="phone-control-btn" aria-label="Next Video">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
 
-      <span class="phone-instruction">✦ Click a card on the right or use the controls above to preview</span>
+      <span class="phone-instruction">▶ Press Play to watch with sound</span>
     </div>
 
     <!-- Right Column: Gallery Cards Grid -->
