@@ -236,16 +236,12 @@ if (lightbox && igPosts.length > 0) {
 }
 
 
-/* ----------- Phone Mockup Video Player ----------- */
+/* -- Phone Mockup: click card to play, tap screen to pause/resume -- */
 (function () {
   var vid         = document.getElementById('phoneVideo');
   var placeholder = document.getElementById('phonePlaceholder');
+  var screen      = document.querySelector('.phone-screen');
   var cards       = Array.from(document.querySelectorAll('.work-card.video-card'));
-  var ppBtn       = document.getElementById('playPauseBtn');
-  var prevBtn     = document.getElementById('prevBtn');
-  var nextBtn     = document.getElementById('nextBtn');
-  var playIco     = ppBtn && ppBtn.querySelector('.play-icon');
-  var pauseIco    = ppBtn && ppBtn.querySelector('.pause-icon');
   var descEl      = document.getElementById('phoneVideoDesc');
   var likesEl     = document.getElementById('phoneLikes');
   var viewsEl     = document.getElementById('phoneViews');
@@ -253,59 +249,56 @@ if (lightbox && igPosts.length > 0) {
 
   if (!vid || !cards.length) return;
 
-  var current   = 0;
-  var srcLoaded = '';
+  var loadedSrc = '';
 
-  function showPlay()  { if (playIco) playIco.style.display='block';  if (pauseIco) pauseIco.style.display='none';  }
-  function showPause() { if (playIco) playIco.style.display='none';   if (pauseIco) pauseIco.style.display='block'; }
-
-  function setCard(idx) {
+  function updateCard(idx) {
     cards.forEach(function(c){ c.classList.remove('active'); });
     cards[idx].classList.add('active');
-    current = idx;
     if (descEl)  descEl.textContent  = cards[idx].getAttribute('data-desc')  || '';
     if (likesEl) likesEl.textContent = cards[idx].getAttribute('data-likes') || '';
     if (viewsEl) viewsEl.textContent = cards[idx].getAttribute('data-views') || '';
     return cards[idx].getAttribute('data-video') || '';
   }
 
-  /* The ONLY play function — must be inside a real click handler */
-  function startPlay(src) {
+  function playWithSound(src) {
+    /* Show video, hide placeholder */
     if (placeholder) placeholder.style.display = 'none';
     vid.style.display = 'block';
     vid.muted  = false;
     vid.volume = 1;
 
-    if (src !== srcLoaded) {
-      /* New source: set it, wait for canplay, then play */
-      srcLoaded = src;
+    if (src === loadedSrc) {
+      /* Already loaded — just rewind and play */
+      vid.currentTime = 0;
+      vid.play().catch(function(e){ console.warn(e); });
+    } else {
+      /* New source — set it, wait for enough data, then play */
+      loadedSrc = src;
       vid.src   = src;
       vid.load();
-      vid.addEventListener('canplay', function onCanPlay() {
-        vid.removeEventListener('canplay', onCanPlay);
+      vid.addEventListener('canplay', function once() {
+        vid.removeEventListener('canplay', once);
         vid.muted  = false;
         vid.volume = 1;
         vid.play().catch(function(e){ console.warn(e); });
       });
-    } else {
-      /* Same source already loaded — just play */
-      vid.currentTime = 0;
-      vid.play().catch(function(e){ console.warn(e); });
     }
   }
 
-  /* Card clicks */
+  /* Card clicks — this IS the user gesture that unlocks sound */
   cards.forEach(function(card, idx) {
     var thumb = card.querySelector('video');
-    card.addEventListener('mouseenter', function(){ if(thumb) thumb.play().catch(function(){}); });
-    card.addEventListener('mouseleave', function(){ if(thumb){ thumb.pause(); thumb.currentTime=0; } });
-    card.addEventListener('click', function(){ startPlay(setCard(idx)); });
+    card.addEventListener('mouseenter', function(){ if (thumb) thumb.play().catch(function(){}); });
+    card.addEventListener('mouseleave', function(){ if (thumb){ thumb.pause(); thumb.currentTime = 0; } });
+    card.addEventListener('click', function(){ playWithSound(updateCard(idx)); });
   });
 
-  /* Play/Pause button */
-  if (ppBtn) {
-    ppBtn.addEventListener('click', function() {
-      if (!srcLoaded) { startPlay(setCard(0)); return; }
+  /* Tap the phone screen to pause / resume */
+  if (screen) {
+    screen.addEventListener('click', function(e) {
+      /* ignore clicks that originated from action buttons */
+      if (e.target.closest('.phone-action-btn')) return;
+      if (!loadedSrc) return;          /* nothing loaded yet */
       if (vid.paused) {
         vid.muted  = false;
         vid.volume = 1;
@@ -316,13 +309,8 @@ if (lightbox && igPosts.length > 0) {
     });
   }
 
-  /* Prev / Next */
-  if (prevBtn) prevBtn.addEventListener('click', function(){ startPlay(setCard((current - 1 + cards.length) % cards.length)); });
-  if (nextBtn) nextBtn.addEventListener('click', function(){ startPlay(setCard((current + 1) % cards.length)); });
+  /* Keep disc animation in sync */
+  vid.addEventListener('play',  function(){ if (disc) disc.classList.add('playing'); });
+  vid.addEventListener('pause', function(){ if (disc) disc.classList.remove('playing'); });
 
-  /* Keep icons in sync with real video state */
-  vid.addEventListener('play',  function(){ showPause(); if(disc) disc.classList.add('playing'); });
-  vid.addEventListener('pause', function(){ showPlay();  if(disc) disc.classList.remove('playing'); });
-
-  showPlay();
 }());
