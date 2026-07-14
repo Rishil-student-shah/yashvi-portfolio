@@ -230,6 +230,47 @@ const audioDisc = document.querySelector('.phone-audio-disc');
 const videoCards = document.querySelectorAll('.work-card.video-card');
 const phoneScreen = document.querySelector('.phone-screen');
 
+const generateThumbnail = (videoSrc, imgEl) => {
+  if (!videoSrc || !imgEl) return;
+
+  const video = document.createElement('video');
+  video.src = videoSrc;
+  video.muted = true;
+  video.playsInline = true;
+  video.preload = 'auto';
+
+  const capture = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 720;
+    canvas.height = video.videoHeight || 1280;
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    imgEl.src = canvas.toDataURL('image/jpeg', 0.9);
+  };
+
+  video.addEventListener('loadeddata', () => {
+    try {
+      video.currentTime = 0.2;
+    } catch (_error) {
+      capture();
+    }
+  }, { once: true });
+
+  video.addEventListener('seeked', () => {
+    capture();
+    video.removeAttribute('src');
+    video.load();
+  }, { once: true });
+};
+
+document.querySelectorAll('.work-card-thumb[data-thumb-src]').forEach((imgEl) => {
+  const thumbSrc = imgEl.getAttribute('data-thumb-src');
+  if (thumbSrc) {
+    generateThumbnail(thumbSrc, imgEl);
+  }
+});
+
 if (phoneVideo && videoCards.length > 0) {
   let currentVideoCard = document.querySelector('.work-card.video-card.active') || videoCards[0];
 
