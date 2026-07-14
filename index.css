@@ -666,10 +666,50 @@ a { text-decoration: none; color: inherit; }
 
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+    "marketing marketing videography editing"
+    "marketing marketing strategy strategy";
   gap: 24px;
   max-width: 1100px;
   margin: 0 auto;
+}
+
+.skill-card-featured { grid-area: marketing; }
+.skill-card-tall { grid-area: videography; }
+.skill-card-compact { grid-area: editing; }
+.skill-card-footer { grid-area: strategy; }
+
+.skill-card-featured,
+.skill-card-footer {
+  text-align: left;
+  padding: 38px 28px;
+}
+
+.skill-card-tall,
+.skill-card-compact {
+  text-align: left;
+}
+
+.skill-card-featured .skill-icon,
+.skill-card-footer .skill-icon,
+.skill-card-tall .skill-icon,
+.skill-card-compact .skill-icon {
+  margin-bottom: 18px;
+}
+
+.skill-card-featured .skill-name,
+.skill-card-footer .skill-name,
+.skill-card-tall .skill-name,
+.skill-card-compact .skill-name {
+  font-size: 1.05rem;
+}
+
+.skill-card-featured .skill-desc,
+.skill-card-footer .skill-desc,
+.skill-card-tall .skill-desc,
+.skill-card-compact .skill-desc {
+  max-width: 260px;
 }
 
 .skill-card {
@@ -2414,6 +2454,14 @@ body {
 
   /* Skills: 2 columns on tablet */
   .skills-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .skills-grid { grid-template-areas: none; }
+  .skill-card-featured,
+  .skill-card-tall,
+  .skill-card-compact,
+  .skill-card-footer {
+    grid-area: auto;
+    text-align: center;
+  }
 
   /* Work */
   .work-dashboard  { grid-template-columns: 1fr; gap: 32px; }
@@ -2446,6 +2494,15 @@ body {
   /* Skills — 2 columns fits perfectly on 430px */
   .skills-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
   .skill-card { padding: 24px 16px; border-radius: 20px; }
+  .skills-grid { grid-template-areas: none; }
+  .skill-card-featured,
+  .skill-card-tall,
+  .skill-card-compact,
+  .skill-card-footer {
+    grid-area: auto;
+    text-align: center;
+    padding: 24px 16px;
+  }
 
   /* Work */
   .reel-stats-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -2481,6 +2538,15 @@ body {
   .skills-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .skill-card { padding: 22px 14px; }
   .skill-icon { font-size: 1.9rem; }
+  .skills-grid { grid-template-areas: none; }
+  .skill-card-featured,
+  .skill-card-tall,
+  .skill-card-compact,
+  .skill-card-footer {
+    grid-area: auto;
+    text-align: center;
+    padding: 22px 14px;
+  }
 
   /* Work */
   #work { padding: 62px 20px; }
