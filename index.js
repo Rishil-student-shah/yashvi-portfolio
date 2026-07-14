@@ -333,8 +333,8 @@ if (phoneVideo && videoCards.length > 0) {
       if (videoSrc) {
         // Change phone video source and unmute it since the user interacted by clicking
         phoneVideo.src = videoSrc;
-        phoneVideo.muted = false;
         phoneVideo.load();
+        phoneVideo.muted = false;
         
         // Play the video with sound!
         phoneVideo.play().then(() => {
