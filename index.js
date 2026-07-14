@@ -59,43 +59,6 @@ const observer = new IntersectionObserver((entries) => {
 
 animatedEls.forEach(el => observer.observe(el));
 
-/* ─────────── Work Tabs ─────────── */
-const tabs = document.querySelectorAll('.work-tab');
-const panels = document.querySelectorAll('.work-panel');
-
-tabs.forEach((tab, index) => {
-  tab.addEventListener('click', () => {
-    // Deactivate all
-    tabs.forEach(t => {
-      t.classList.remove('active');
-      t.setAttribute('aria-selected', 'false');
-    });
-    panels.forEach(p => p.classList.remove('active'));
-
-    // Activate clicked tab
-    tab.classList.add('active');
-    tab.setAttribute('aria-selected', 'true');
-    panels[index].classList.add('active');
-
-    // Re-trigger animations in the newly activated panel
-    const newEls = panels[index].querySelectorAll('.fade-up, .fade-left, .fade-right');
-    newEls.forEach(el => {
-      el.classList.remove('visible');
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          el.classList.add('visible');
-        });
-      });
-    });
-
-    // Scroll the active panel into view so content isn't cut off
-    requestAnimationFrame(() => {
-      const panelTop = panels[index].getBoundingClientRect().top + window.scrollY;
-      const offset   = navbar.offsetHeight + 24; // nav height + breathing room
-      window.scrollTo({ top: panelTop - offset, behavior: 'smooth' });
-    });
-  });
-});
 
 /* ─────────── Smooth Scroll for all anchor links ─────────── */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
