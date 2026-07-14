@@ -9,7 +9,7 @@
   <meta property="og:description" content="Portfolio of Yashvi Shah — turning ideas into content that makes people stop, watch, and remember the brand." />
   <meta property="og:type" content="website" />
   <meta name="robots" content="index, follow" />
-  <link rel="stylesheet" href="index.css?v=2.0" />
+  <link rel="stylesheet" href="index.css?v=2.2" />
 </head>
 <body>
 
@@ -123,16 +123,25 @@
         <div class="phone-screen">
           <div class="phone-notch"></div>
           
+          <!-- Clicking phone screen plays/pauses & mutes/unmutes -->
           <video id="phoneVideo" class="phone-video-player" src="images/reel 1.mp4" autoplay muted loop playsinline></video>
           
+          <!-- Tap to Mute indicator overlay (briefly flashes on screen) -->
+          <div id="phoneMuteIndicator" class="phone-mute-indicator" style="display:none;">🔊</div>
+
           <!-- Instagram UI Overlay -->
           <div class="phone-reels-overlay">
             <div class="phone-reels-top">
               <span>Reels</span>
-              <span style="font-size: 1rem;">📷</span>
+              <span class="phone-audio-icon">📷</span>
             </div>
             
             <div class="phone-reels-bottom">
+              <!-- Views Badge -->
+              <div class="phone-views-badge">
+                <span class="views-icon">▶</span>
+                <span id="phoneViews">585K</span> views
+              </div>
               <div class="phone-user">
                 <img src="images/profile_placeholder.png" class="phone-user-avatar" alt="Yashvi Shah" />
                 <span class="phone-username">yashviii.shah</span>
@@ -140,34 +149,47 @@
               </div>
               <p id="phoneVideoDesc" class="phone-description">Viral UGC campaign promo reel! 🚀✨</p>
               <div class="phone-audio">
-                <span>🎵</span>
+                <span class="music-note-icon">🎵</span>
                 <span class="marquee-wrapper"><marquee behavior="scroll" direction="left" scrollamount="2">Original Audio · yashviii.shah</marquee></span>
               </div>
             </div>
           </div>
           
-          <!-- Floating Action Buttons -->
+          <!-- Floating Action Buttons: HEART, COMMENT, SHARE, MORE (Instagram SVGs) -->
           <div class="phone-reels-right">
-            <div class="phone-action-btn">
-              <span>❤️</span>
+            <!-- Heart Like Button -->
+            <button class="phone-action-btn" aria-label="Like post">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.077 2.5 12.195 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 2.061 4.21 4.21 0 0 1 3.675-2.061m0-2a6.22 6.22 0 0 0-4.792 2.186 6.22 6.22 0 0 0-4.792-2.186C3.479 1.904 0 5.146 0 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.705 3.147 1 1 0 0 0 1.2 0c1.012-.66 2.274-1.62 3.705-3.147l1.027-.918c.284-.253.57-.501.853-.747C21.45 14.949 24 12.732 24 9.122c0-3.976-3.479-7.218-7.208-7.218z"/></svg>
               <span id="phoneLikes">19.5K</span>
-            </div>
-            <div class="phone-action-btn">
-              <span>💬</span>
+            </button>
+            
+            <!-- Comment Button -->
+            <button class="phone-action-btn" aria-label="Comment">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z"/></svg>
               <span>482</span>
-            </div>
-            <div class="phone-action-btn">
-              <span>🚀</span>
+            </button>
+            
+            <!-- Share Airplane Button -->
+            <button class="phone-action-btn" aria-label="Share">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M22 2 2 8.66l7.33 3.12L18 5l-6.78 8.67 3.12 7.33L22 2Z"/></svg>
               <span>Share</span>
-            </div>
-            <div class="phone-action-btn">
-              <span>👁️</span>
-              <span id="phoneViews">585K</span>
+            </button>
+            
+            <!-- More options (Three Dots) -->
+            <button class="phone-action-btn" aria-label="More options">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+              <span>More</span>
+            </button>
+            
+            <!-- Spinning audio disc at bottom of column -->
+            <div class="phone-audio-disc-wrapper">
+              <img src="images/profile_placeholder.png" class="phone-audio-disc playing" alt="Music disc" />
             </div>
           </div>
         </div>
       </div>
       <span class="phone-instruction">✦ Click any video card on the right to preview inside the phone</span>
+      <span class="phone-instruction phone-instruction-sub" style="font-size:0.55rem; margin-top:-8px; opacity:0.6; color: var(--gold);">✦ Tap the screen to mute / unmute video</span>
     </div>
 
     <!-- Right Column: Gallery Cards Grid -->

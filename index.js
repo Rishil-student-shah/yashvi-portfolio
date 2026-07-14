@@ -240,9 +240,40 @@ const phoneVideo = document.getElementById('phoneVideo');
 const phoneVideoDesc = document.getElementById('phoneVideoDesc');
 const phoneLikes = document.getElementById('phoneLikes');
 const phoneViews = document.getElementById('phoneViews');
+const phoneMuteIndicator = document.getElementById('phoneMuteIndicator');
+const audioDisc = document.querySelector('.phone-audio-disc');
 const videoCards = document.querySelectorAll('.work-card.video-card');
 
 if (phoneVideo && videoCards.length > 0) {
+  // Sync rotating audio disc animation with video play state
+  phoneVideo.addEventListener('play', () => {
+    if (audioDisc) audioDisc.classList.add('playing');
+  });
+  
+  phoneVideo.addEventListener('pause', () => {
+    if (audioDisc) audioDisc.classList.remove('playing');
+  });
+
+  // Tap screen to toggle Mute/Unmute
+  const toggleMute = () => {
+    phoneVideo.muted = !phoneVideo.muted;
+    
+    if (phoneMuteIndicator) {
+      phoneMuteIndicator.textContent = phoneVideo.muted ? '🔇' : '🔊';
+      // Restart CSS animation by rebuilding element or cloning it
+      phoneMuteIndicator.style.display = 'none';
+      void phoneMuteIndicator.offsetWidth; // trigger reflow
+      phoneMuteIndicator.style.display = 'flex';
+      
+      // Hide after animation finishes
+      setTimeout(() => {
+        phoneMuteIndicator.style.display = 'none';
+      }, 700);
+    }
+  };
+
+  phoneVideo.addEventListener('click', toggleMute);
+
   videoCards.forEach(card => {
     const previewVideo = card.querySelector('video');
 
@@ -273,10 +304,26 @@ if (phoneVideo && videoCards.length > 0) {
       const desc = card.getAttribute('data-desc');
 
       if (videoSrc) {
-        // Change phone video source
+        // Change phone video source and unmute it since the user interacted by clicking
         phoneVideo.src = videoSrc;
+        phoneVideo.muted = false;
         phoneVideo.load();
-        phoneVideo.play().catch(() => {});
+        
+        // Play the video with sound!
+        phoneVideo.play().then(() => {
+          // Temporarily show the sound indicator unmuted
+          if (phoneMuteIndicator) {
+            phoneMuteIndicator.textContent = '🔊';
+            phoneMuteIndicator.style.display = 'flex';
+            setTimeout(() => {
+              phoneMuteIndicator.style.display = 'none';
+            }, 700);
+          }
+        }).catch(() => {
+          // If browser still blocks, fallback to muted autoplay
+          phoneVideo.muted = true;
+          phoneVideo.play().catch(() => {});
+        });
 
         // Update stats and description
         if (phoneLikes) phoneLikes.textContent = likes || '0';
