@@ -301,6 +301,17 @@ if (phoneVideo && videoCards.length > 0) {
   phoneVideo.muted = false;
   setPausedOverlay(true);
 
+  if (phonePauseOverlay) {
+    phonePauseOverlay.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (phoneVideo.paused) {
+        playReel();
+      } else {
+        pauseReel();
+      }
+    });
+  }
+
   phoneVideo.addEventListener('loadeddata', () => {
     phoneVideo.pause();
     setPausedOverlay(true);
@@ -384,20 +395,6 @@ if (phoneVideo && videoCards.length > 0) {
 
   videoCards.forEach(card => {
     const previewVideo = card.querySelector('video');
-
-    // 1. Silent Preview Hover Autoplay
-    card.addEventListener('mouseenter', () => {
-      if (previewVideo) {
-        previewVideo.play().catch(() => {});
-      }
-    });
-
-    card.addEventListener('mouseleave', () => {
-      if (previewVideo) {
-        previewVideo.pause();
-        previewVideo.currentTime = 0;
-      }
-    });
 
     // 2. Click to load inside phone mockup
     card.addEventListener('click', () => {

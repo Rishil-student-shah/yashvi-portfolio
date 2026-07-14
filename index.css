@@ -824,16 +824,23 @@ a { text-decoration: none; color: inherit; }
 
 .phone-pause-overlay {
   position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.12);
+  width: 72px;
+  height: 72px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0.2s ease;
   z-index: 35;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .phone-pause-overlay.visible {
@@ -842,20 +849,22 @@ a { text-decoration: none; color: inherit; }
 }
 
 .phone-pause-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
   color: var(--white);
   font-size: 1.8rem;
   font-weight: 700;
   letter-spacing: -0.15em;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+@media (min-width: 769px) {
+  .phone-pause-overlay {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .phone-pause-overlay.visible {
+    display: flex;
+  }
 }
 
 /* Instagram Reels UI Mockup Overlay */
