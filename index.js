@@ -230,9 +230,61 @@ if (lightbox && igPosts.length > 0) {
         showPost(currentPostIndex - 1);
       } else if (e.key === 'ArrowRight') {
         showPost(currentPostIndex + 1);
-      }
     }
   });
 }
+
+/* ─────────── Interactive Phone Mockup Video Player ─────────── */
+const phoneVideo = document.getElementById('phoneVideo');
+const phoneVideoDesc = document.getElementById('phoneVideoDesc');
+const phoneLikes = document.getElementById('phoneLikes');
+const phoneViews = document.getElementById('phoneViews');
+const videoCards = document.querySelectorAll('.work-card.video-card');
+
+if (phoneVideo && videoCards.length > 0) {
+  videoCards.forEach(card => {
+    const previewVideo = card.querySelector('video');
+
+    // 1. Silent Preview Hover Autoplay
+    card.addEventListener('mouseenter', () => {
+      if (previewVideo) {
+        previewVideo.play().catch(() => {});
+      }
+    });
+
+    card.addEventListener('mouseleave', () => {
+      if (previewVideo) {
+        previewVideo.pause();
+        previewVideo.currentTime = 0;
+      }
+    });
+
+    // 2. Click to load inside phone mockup
+    card.addEventListener('click', () => {
+      // Remove active class from all cards
+      videoCards.forEach(c => c.classList.remove('active'));
+      // Add active class to clicked card
+      card.classList.add('active');
+
+      const videoSrc = card.getAttribute('data-video');
+      const likes = card.getAttribute('data-likes');
+      const views = card.getAttribute('data-views');
+      const desc = card.getAttribute('data-desc');
+
+      if (videoSrc) {
+        // Change phone video source
+        phoneVideo.src = videoSrc;
+        phoneVideo.load();
+        phoneVideo.play().catch(() => {});
+
+        // Update stats and description
+        if (phoneLikes) phoneLikes.textContent = likes || '0';
+        if (phoneViews) phoneViews.textContent = views || '0';
+        if (phoneVideoDesc) phoneVideoDesc.textContent = desc || '';
+      }
+    });
+  });
+}
+
 
 

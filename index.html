@@ -116,61 +116,129 @@
     </h2>
   </div>
 
-  <div class="work-grid">
-    <!-- Reel Edits -->
-    <div class="work-card fade-up delay-1">
-      <div class="work-card-img" aria-label="Reel placeholder 1">
-        <span style="font-size:2rem; color:rgba(255,235,195,0.25);">▶</span>
-        <div class="add-image-label">Add Reel Thumbnail</div>
+  <div class="work-dashboard">
+    <!-- Left Column: Sticky Interactive Phone Mockup -->
+    <div class="phone-container fade-left">
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          
+          <video id="phoneVideo" class="phone-video-player" src="images/reel 1.mp4" autoplay muted loop playsinline></video>
+          
+          <!-- Instagram UI Overlay -->
+          <div class="phone-reels-overlay">
+            <div class="phone-reels-top">
+              <span>Reels</span>
+              <span style="font-size: 1rem;">📷</span>
+            </div>
+            
+            <div class="phone-reels-bottom">
+              <div class="phone-user">
+                <img src="images/profile_placeholder.png" class="phone-user-avatar" alt="Yashvi Shah" />
+                <span class="phone-username">yashviii.shah</span>
+                <span class="phone-follow-btn">Follow</span>
+              </div>
+              <p id="phoneVideoDesc" class="phone-description">Viral UGC campaign promo reel! 🚀✨</p>
+              <div class="phone-audio">
+                <span>🎵</span>
+                <span class="marquee-wrapper"><marquee behavior="scroll" direction="left" scrollamount="2">Original Audio · yashviii.shah</marquee></span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Floating Action Buttons -->
+          <div class="phone-reels-right">
+            <div class="phone-action-btn">
+              <span>❤️</span>
+              <span id="phoneLikes">19.5K</span>
+            </div>
+            <div class="phone-action-btn">
+              <span>💬</span>
+              <span>482</span>
+            </div>
+            <div class="phone-action-btn">
+              <span>🚀</span>
+              <span>Share</span>
+            </div>
+            <div class="phone-action-btn">
+              <span>👁️</span>
+              <span id="phoneViews">585K</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="work-card-body">
-        <div class="work-card-label">Lifestyle</div>
-        <div class="work-card-title">Daily Life Reel Edit</div>
-      </div>
-    </div>
-    
-    <div class="work-card fade-up delay-2">
-      <div class="work-card-img" aria-label="Reel placeholder 2">
-        <span style="font-size:2rem; color:rgba(255,235,195,0.25);">▶</span>
-        <div class="add-image-label">Add Reel Thumbnail</div>
-      </div>
-      <div class="work-card-body">
-        <div class="work-card-label">Beauty</div>
-        <div class="work-card-title">Skincare Brand Reel</div>
-      </div>
-    </div>
-    
-    <div class="work-card fade-up delay-3">
-      <div class="work-card-img" aria-label="Reel placeholder 3">
-        <span style="font-size:2rem; color:rgba(255,235,195,0.25);">▶</span>
-        <div class="add-image-label">Add Reel Thumbnail</div>
-      </div>
-      <div class="work-card-body">
-        <div class="work-card-label">UGC</div>
-        <div class="work-card-title">UGC Content Reel</div>
-      </div>
+      <span class="phone-instruction">✦ Click any video card on the right to preview inside the phone</span>
     </div>
 
-    <!-- Moodboards + Strategies -->
-    <div class="work-card fade-up delay-4">
-      <div class="work-card-img" aria-label="Moodboard placeholder 1">
-        <span style="font-size:2rem; color:rgba(255,235,195,0.25);">🎨</span>
-        <div class="add-image-label">Add Moodboard Image</div>
+    <!-- Right Column: Gallery Cards Grid -->
+    <div class="work-grid">
+      <!-- Card 1: The Viral UGC Reel -->
+      <div class="work-card video-card active fade-up delay-1" data-video="images/reel 1.mp4" data-likes="19.5K" data-views="585K" data-desc="Viral UGC campaign promo reel! 🚀✨">
+        <div class="work-card-img">
+          <video src="images/reel 1.mp4" muted loop playsinline></video>
+          <div class="video-overlay-stats">
+            <span>🔥 585K Views</span>
+            <span>❤️ 19.5K Likes</span>
+          </div>
+        </div>
+        <div class="work-card-body">
+          <div class="work-card-label">Viral Campaign · 585k+ Views</div>
+          <div class="work-card-title">Brand Promotion UGC Reel</div>
+        </div>
       </div>
-      <div class="work-card-body">
-        <div class="work-card-label">Moodboard</div>
-        <div class="work-card-title">Brand Color & Aesthetic Concept</div>
+
+      <!-- Card 2: Skincare Brand Reel (Loads reel 1.mp4 as backup / demo) -->
+      <div class="work-card video-card fade-up delay-2" data-video="images/reel 1.mp4" data-likes="8.4K" data-views="120K" data-desc="Skincare routine and aesthetic brand collab ✨🧖‍♀️">
+        <div class="work-card-img">
+          <video src="images/reel 1.mp4" muted loop playsinline></video>
+          <div class="video-overlay-stats">
+            <span>🔥 120K Views</span>
+            <span>❤️ 8.4K Likes</span>
+          </div>
+        </div>
+        <div class="work-card-body">
+          <div class="work-card-label">UGC Video · Beauty</div>
+          <div class="work-card-title">Skincare Brand Reel</div>
+        </div>
       </div>
-    </div>
-    
-    <div class="work-card fade-up delay-5">
-      <div class="work-card-img" aria-label="Moodboard placeholder 2">
-        <span style="font-size:2rem; color:rgba(255,235,195,0.25);">📋</span>
-        <div class="add-image-label">Add Content Calendar</div>
+
+      <!-- Card 3: Daily Life Reel Edit (Loads reel 1.mp4 as backup / demo) -->
+      <div class="work-card video-card fade-up delay-3" data-video="images/reel 1.mp4" data-likes="12.1K" data-views="250K" data-desc="Lifestyle aesthetic vlog reel edit 🌿☕">
+        <div class="work-card-img">
+          <video src="images/reel 1.mp4" muted loop playsinline></video>
+          <div class="video-overlay-stats">
+            <span>🔥 250K Views</span>
+            <span>❤️ 12.1K Likes</span>
+          </div>
+        </div>
+        <div class="work-card-body">
+          <div class="work-card-label">Shortform Edit · Lifestyle</div>
+          <div class="work-card-title">Daily Life Reel Edit</div>
+        </div>
       </div>
-      <div class="work-card-body">
-        <div class="work-card-label">Strategy</div>
-        <div class="work-card-title">Monthly Content Calendar</div>
+
+      <!-- Card 4: Moodboard Concept -->
+      <div class="work-card image-card fade-up delay-4">
+        <div class="work-card-img">
+          <span style="font-size:2.5rem; color:rgba(255,235,195,0.25);">🎨</span>
+          <div class="add-image-label">Add Moodboard Image</div>
+        </div>
+        <div class="work-card-body">
+          <div class="work-card-label">Moodboard</div>
+          <div class="work-card-title">Brand Color & Aesthetic Concept</div>
+        </div>
+      </div>
+
+      <!-- Card 5: Strategy Content Calendar -->
+      <div class="work-card image-card fade-up delay-5">
+        <div class="work-card-img">
+          <span style="font-size:2.5rem; color:rgba(255,235,195,0.25);">📋</span>
+          <div class="add-image-label">Add Content Calendar</div>
+        </div>
+        <div class="work-card-body">
+          <div class="work-card-label">Strategy</div>
+          <div class="work-card-title">Monthly Content Calendar</div>
+        </div>
       </div>
     </div>
   </div>
