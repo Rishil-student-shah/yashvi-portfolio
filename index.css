@@ -600,12 +600,10 @@ a { text-decoration: none; color: inherit; }
   font-weight: 500;
 }
 
-/* About right — decorative images */
+/* About right — single tall portrait photo */
 .about-right {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 240px 240px;
-  gap: 16px;
+  grid-template-columns: 1fr;
   position: relative;
 }
 
@@ -622,12 +620,13 @@ a { text-decoration: none; color: inherit; }
   gap: 12px;
   color: rgba(255, 235, 195, 0.4);
   transition: transform var(--transition), box-shadow var(--transition);
+  height: 496px; /* Match original combined height */
 }
 .about-img-placeholder:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
-.about-img-placeholder:first-child { grid-row: span 2; }
+
 
 .placeholder-icon {
   font-size: 2.5rem;
