@@ -230,6 +230,7 @@ if (lightbox && igPosts.length > 0) {
         showPost(currentPostIndex - 1);
       } else if (e.key === 'ArrowRight') {
         showPost(currentPostIndex + 1);
+      }
     }
   });
 }
